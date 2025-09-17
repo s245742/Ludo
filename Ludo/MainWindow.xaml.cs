@@ -18,6 +18,7 @@ namespace Ludo
     {
         public MainWindow()
         {
+            Console.WriteLine("hello world");
             InitializeComponent();
         }
     }

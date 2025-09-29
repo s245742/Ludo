@@ -5,6 +5,4 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ludo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Button Content="Rasmus" HorizontalAlignment="Left" Margin="355,110,0,0" VerticalAlignment="Top"/>
-</Window>
+        Title="MainWindow" Height="450" Width="800"/>

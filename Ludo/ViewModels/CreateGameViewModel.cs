@@ -1,23 +1,28 @@
-﻿using System;
+﻿using Ludo.Commands;
+using Ludo.Models;
+using Ludo.Services;
+using Ludo.Stores;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Ludo.Models;
-using Ludo.Services;
-using Ludo.Commands;
+using System.Windows.Input;
 namespace Ludo.ViewModels
 {
-    public class GameViewModel : ViewModelBase
+    public class CreateGameViewModel : ViewModelBase
     {
-
+        
+        public ICommand NavigateStartScreenCommand { get; }
 
         GameService ObjGameService;
-        public GameViewModel()
+        public CreateGameViewModel(NavigationStore navigationStore)
         {
+            //navigation
+            this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => new StartScreenViewModel(navigationStore));
+
             ObjGameService = new GameService(); //can now call method
             LoadData(); //helper method
             CurrGame = new Game();
@@ -62,7 +67,7 @@ namespace Ludo.ViewModels
         {
             try
             {
-                currGame.Name = "Martin3"; //change to test
+                currGame.Name = "Martin4"; //change to test
                 var isSaved = ObjGameService.add(currGame);
                 LoadData(); //reload display
             }

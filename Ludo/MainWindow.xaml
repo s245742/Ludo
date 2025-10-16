@@ -4,5 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ludo"
+        xmlns:viewmodels="clr-namespace:Ludo.ViewModels"
+        xmlns:views="clr-namespace:Ludo.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"/>
+        Title="MainWindow" Height="450" Width="800" >
+
+    <ContentControl Content="{Binding CurrentViewModel}" > <!-- now render but need mapping, we do  that with datatemplates -->
+        <ContentControl.Resources>
+            <DataTemplate DataType="{x:Type viewmodels:GameViewModel}">
+                <views:StartScreen/>
+            </DataTemplate>
+            
+        </ContentControl.Resources>
+        
+    </ContentControl>
+
+
+</Window>

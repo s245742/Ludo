@@ -15,10 +15,11 @@
                 <views:CreateGameView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewmodels:StartScreenViewModel}">
-                <!-- here gameviewmodel is mapped to startscreen view -->
                 <views:StartScreenView/>
             </DataTemplate>
-
+            <DataTemplate DataType="{x:Type viewmodels:JoinGameViewModel}">
+                <views:JoinGameView/>
+            </DataTemplate>
         </ContentControl.Resources>
         
     </ContentControl>

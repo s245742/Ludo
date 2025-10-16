@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ludo.Stores
 {
-    //Store current application state of viewmodel here instead of main view model
+    //Store current application state of viewmodel here 
     public class NavigationStore
     {
 
@@ -20,7 +20,7 @@ namespace Ludo.Stores
             set
             {
                 currentViewModel = value;
-                OnCurrentViewModelChanged();
+                OnCurrentViewModelChanged(); //invoke when called
                 
             }
         

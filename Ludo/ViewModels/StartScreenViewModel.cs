@@ -13,11 +13,13 @@ namespace Ludo.ViewModels
     {
 
         public ICommand NavigateCreateGameCommand {  get; }
+        public ICommand NavigateJoinGameCommand { get; }
 
         public StartScreenViewModel(NavigationStore navigationStore)
         {
             //nav to game view model
             this.NavigateCreateGameCommand = new NavigateCommand<CreateGameViewModel>(navigationStore, () => new CreateGameViewModel(navigationStore)); 
+            this.NavigateJoinGameCommand = new NavigateCommand<JoinGameViewModel>(navigationStore, () => new JoinGameViewModel(navigationStore));
         }
 
     }

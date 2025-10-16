@@ -67,7 +67,7 @@ namespace Ludo.ViewModels
         {
             try
             {
-                currGame.Name = "Martin4"; //change to test
+                currGame.Name = "Martin4sdcnafjlerfjerj gralegermlgs"; //change to test
                 var isSaved = ObjGameService.add(currGame);
                 LoadData(); //reload display
             }

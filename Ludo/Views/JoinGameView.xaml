@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Ludo.Views.JoinGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ludo.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Button Content="Back to Start " HorizontalAlignment="Left" Height="45" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Command="{Binding NavigateStartScreenCommand}"/>
+
+        <DataGrid Name="GamesListData" AutoGenerateColumns="False" Margin="180,15,45,52" ItemsSource="{Binding Path=GamesList}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Game Name" IsReadOnly="true" Width="0.50*" Binding="{Binding Path=Name}" />
+
+                <DataGridTemplateColumn Header="Join Game" IsReadOnly="True" Width="0.25*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Margin="2">Join</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Delete Game" IsReadOnly="True" Width="0.25*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Margin="2">Delete</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+
+            </DataGrid.Columns>
+            
+        </DataGrid>
+    </Grid>
+</UserControl>

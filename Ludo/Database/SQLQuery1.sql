@@ -1,7 +1,7 @@
 ﻿
 drop table Game_Piece;
 drop table Player;
-drop table Game
+drop table Game;
 GO
 
 CREATE TABLE Game
@@ -23,8 +23,7 @@ Create table Game_Piece
 (
     GamePiece_ID INT PRIMARY KEY IDENTITY,
     Player_ID INT,
-    X_Cord INT,
-    Y_Cord INT,
+    Board_Pos INT,
     FOREIGN KEY (Player_ID) REFERENCES Player(ID)
 );
 GO

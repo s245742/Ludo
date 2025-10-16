@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Join Game" HorizontalAlignment="Left" Height="70" Margin="70,0,0,0" VerticalAlignment="Center" Width="168"/>
-        <Button Content="Create Game" HorizontalAlignment="Left" Height="70" Margin="536,0,0,0" VerticalAlignment="Center" Width="168" Command="{Binding NavigateCreateGameCommand}"/>
+        <Button Content="Join existing Game" HorizontalAlignment="Left" Height="70" Margin="70,0,0,0" VerticalAlignment="Center" Width="168" Command="{Binding NavigateJoinGameCommand}" />
+        <Button Content="Create new Game" HorizontalAlignment="Left" Height="70" Margin="536,0,0,0" VerticalAlignment="Center" Width="168" Command="{Binding NavigateCreateGameCommand}"/>
         <Label Content="Ludo WPF Application" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="45" Width="287" FontSize="25" FontWeight="Bold"/>
 
     </Grid>

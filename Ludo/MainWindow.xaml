@@ -11,10 +11,14 @@
 
     <ContentControl Content="{Binding CurrentViewModel}" > <!-- now render but need mapping, we do  that with datatemplates -->
         <ContentControl.Resources>
-            <DataTemplate DataType="{x:Type viewmodels:GameViewModel}">
-                <views:StartScreen/>
+            <DataTemplate DataType="{x:Type viewmodels:CreateGameViewModel}"> <!-- here gameviewmodel is mapped to startscreen view -->
+                <views:CreateGameView/>
             </DataTemplate>
-            
+            <DataTemplate DataType="{x:Type viewmodels:StartScreenViewModel}">
+                <!-- here gameviewmodel is mapped to startscreen view -->
+                <views:StartScreenView/>
+            </DataTemplate>
+
         </ContentControl.Resources>
         
     </ContentControl>

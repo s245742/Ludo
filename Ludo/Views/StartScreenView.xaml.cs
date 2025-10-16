@@ -16,13 +16,17 @@ using System.Windows.Shapes;
 namespace Ludo.Views
 {
     /// <summary>
-    /// Interaction logic for StartScreen.xaml
+    /// Interaction logic for StartScreenView.xaml
     /// </summary>
-    public partial class StartScreen : UserControl
+    public partial class StartScreenView : UserControl
     {
-        public StartScreen()
+        public StartScreenView()
         {
             InitializeComponent();
         }
+
+        
+
+        
     }
 }

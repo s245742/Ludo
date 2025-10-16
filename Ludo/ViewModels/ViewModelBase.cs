@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Ludo.ViewModels
 {
 
-    //Inotify implementation and idispose for cleanup
+    //Inotify implementation (other models should inherit)
     public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -24,5 +24,6 @@ namespace Ludo.Views
         {
             InitializeComponent();
         }
+
     }
 }

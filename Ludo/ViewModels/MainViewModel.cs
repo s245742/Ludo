@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ludo.ViewModels
 {
-    //used to manage the current view and viewmodel which is stored in navgiationstore
-    // and is used in "app.xaml.cs" and in mainwindow.xaml"
+    //MainWindows viewmodel
     public class MainViewModel : ViewModelBase
     {
         private readonly NavigationStore navigationStore;

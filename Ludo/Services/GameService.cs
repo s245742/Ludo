@@ -25,7 +25,7 @@ namespace Ludo.Services
              {
                 SqlCommand command = new SqlCommand(query, connection);
 
-                command.Parameters.AddWithValue("@Game_Name", game.Name);
+                command.Parameters.AddWithValue("@Game_Name", game.Game_Name);
                 try
                 {
                     connection.Open();
@@ -43,6 +43,28 @@ namespace Ludo.Services
            
         }
     
+        public bool delete(Game game)
+        {
+            string query = "delete from Game where Game_Name = @Game_Name";
+            int rowsAffected = 0;
+            using (SqlConnection connection = new SqlConnection( connectionString))
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Game_Name", game.Game_Name);
+                try
+                {
+                    connection.Open();
+                    rowsAffected = command.ExecuteNonQuery();
+                    return rowsAffected > 0; //return true if any row update
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+
+            }
+        }
 
         public ObservableCollection<Game> getAll()
         {
@@ -60,7 +82,7 @@ namespace Ludo.Services
                     while (reader.Read()) {
                         gamesList.Add(new Game
                         {
-                            Name = reader.GetString(0)
+                            Game_Name = reader.GetString(0)
                         });
                     }
                     reader.Close(); 

@@ -24,25 +24,53 @@ namespace Ludo.ViewModels
             this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => new StartScreenViewModel(navigationStore));
 
             ObjGameService = new GameService(); //can now call method
-            LoadData(); //helper method
+
             CurrGame = new Game();
+            RedPlayer = new Player("Red");
+            Yellowplayer = new Player("Yellow");
+            GreenPlayer = new Player("Green");
+            BluePlayer = new Player("Blue");
+
             saveCommand = new RelayCommand(Save);
         }
 
-        #region Display games
-        private ObservableCollection<Game> gamesList;
-        public ObservableCollection<Game> GamesList
+        #region CreatePlayers
+        private Player redPlayer;
+
+        public Player RedPlayer
         {
-            get { return gamesList; }
-            set { gamesList = value; OnPropertyChanged("GamesList"); }
+            get { return redPlayer; }
+            set { redPlayer = value; OnPropertyChanged(nameof(RedPlayer)); }
         }
 
-        //helpermethod display games
-        private void LoadData()
+        private Player greenPlayer;
+
+        public Player GreenPlayer
         {
-            GamesList = ObjGameService.getAll();
+            get { return greenPlayer; }
+            set { greenPlayer = value; OnPropertyChanged(nameof(GreenPlayer)); }
         }
+
+        private Player yellowPlayer;
+
+        public Player Yellowplayer
+        {
+            get { return yellowPlayer; }
+            set { yellowPlayer = value; OnPropertyChanged(nameof(Yellowplayer)); }
+        }
+
+        private Player bluePlayer;
+
+        public Player BluePlayer
+        {
+            get { return bluePlayer; }
+            set { bluePlayer = value; OnPropertyChanged(nameof(BluePlayer)); }
+        }
+
+
+
         #endregion
+
 
         #region AddGame
         private Game currGame;
@@ -50,7 +78,7 @@ namespace Ludo.ViewModels
         public Game CurrGame
         {
             get { return currGame; }
-            set { currGame = value; OnPropertyChanged("CurrGame"); }
+            set { currGame = value; OnPropertyChanged(nameof(CurrGame)); }
         }
 
 
@@ -67,9 +95,14 @@ namespace Ludo.ViewModels
         {
             try
             {
-                currGame.Name = "Martin4sdcnafjlerfjerj gralegermlgs"; //change to test
-                var isSaved = ObjGameService.add(currGame);
-                LoadData(); //reload display
+                redPlayer.Game_Name = currGame.Game_Name;
+                bluePlayer.Game_Name=currGame.Game_Name;
+                greenPlayer.Game_Name= currGame.Game_Name;
+                yellowPlayer.Game_Name = currGame.Game_Name;
+
+                var isSaved = ObjGameService.add(currGame);   
+                //service to add players
+                //Service to add game pieces
             }
             catch (Exception ex)
             {

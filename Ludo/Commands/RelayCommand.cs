@@ -26,4 +26,25 @@ namespace Ludo.Commands
             DoWork();
         }
     }
+    //Generic version for when the methods use patameters like delte
+    public class RelayCommand<T> : ICommand
+    {
+        public event EventHandler? CanExecuteChanged;
+        private Action<T> DoWork; //delegate store ref of method that is called by user
+        public RelayCommand(Action<T> work)
+        {
+            DoWork = work;
+        }
+        public bool CanExecute(object? parameter)
+        {
+            return true; //btn enabled, can be clicked
+        }
+
+        //Exceuted code when btn pressed
+        public void Execute(object? parameter)
+        {
+            //Casts object? to T
+            DoWork((T)parameter!);
+        }
+    }
 }

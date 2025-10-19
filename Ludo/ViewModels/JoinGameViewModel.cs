@@ -22,7 +22,7 @@ namespace Ludo.ViewModels
             this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => new StartScreenViewModel(navigationStore));
             ObjGameService = new GameService();
             LoadData();
-
+            deleteGameCommand = new RelayCommand<Game>(DeleteGame);
         }
 
         #region Display games
@@ -38,6 +38,27 @@ namespace Ludo.ViewModels
         {
             GamesList = ObjGameService.getAll();
         }
+        #endregion
+
+        #region Delete games
+        private RelayCommand<Game> deleteGameCommand;
+
+        public RelayCommand<Game> DeleteGameCommand
+        {
+            get { return deleteGameCommand; }
+        }
+
+        //param game is passed with command.parameter (note we need a generic relaycommand here sicne delete taks a param)
+        public void DeleteGame(Game game)
+        {
+            //call gameservice
+            Console.WriteLine(game.Game_Name);
+            LoadData(); //reload displays
+
+        }
+
+
+
         #endregion
 
 

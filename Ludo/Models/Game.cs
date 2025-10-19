@@ -10,12 +10,12 @@ namespace Ludo.Models
     public class Game 
     {
 
-        private String name;
+        private String game_name;
 
-        public String Name 
+        public String Game_Name 
         {
-            get { return name; }
-            set { name = value;}
+            get { return game_name; }
+            set { game_name = value;}
         }
 
     }

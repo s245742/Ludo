@@ -7,16 +7,33 @@
              xmlns:viewmodels="clr-namespace:Ludo.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-  
-    <Grid>
-        <Button x:Name="btnCreateGame" Content="Create Game" RenderTransformOrigin="-0.834,1.914" Margin="524,174,36,174" Command="{Binding Path=SaveCommand}"/>
 
-        <DataGrid Name="GamesListData" AutoGenerateColumns="False" Margin="0,114,363,0" ItemsSource="{Binding Path=GamesList}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=Name}" />
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button Content="Back to Start " HorizontalAlignment="Left" Height="45" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Command="{Binding NavigateStartScreenCommand}"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="799*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="btnCreateGame" Content="Create Game" FontWeight="Bold" RenderTransformOrigin="-0.834,1.914" Margin="352,364,104,10" Command="{Binding Path=SaveCommand}"/>
+
+        <Button x:Name="BackToStartBtn" Content="Back to Start " HorizontalAlignment="Left" Height="45" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Command="{Binding NavigateStartScreenCommand}"/>
+
+        <Rectangle x:Name="GrayRect" HorizontalAlignment="Left" Height="135" Margin="13,135,0,0" Fill="LightGray" VerticalAlignment="Top" Width="211"/>
+        <Rectangle x:Name="GreenRect" HorizontalAlignment="Left" Height="170" Margin="522,0,0,0" Fill="Green" VerticalAlignment="Top" Width="275"/>
+        <Rectangle x:Name="RedRect" HorizontalAlignment="Left" Height="170" Margin="244,0,0,0" Fill="Red" VerticalAlignment="Top" Width="275"/>
+        <Rectangle x:Name="YlwRect" HorizontalAlignment="Left" Height="170" Margin="244,174,0,0" Fill="Yellow" VerticalAlignment="Top" Width="275"/>
+        <Rectangle x:Name="BlueRect" HorizontalAlignment="Left" Height="170" Margin="522,174,0,0" Fill="Blue" VerticalAlignment="Top" Width="275"/>
+
+        <Label x:Name="GameLabel" Content="Enter Game Name" HorizontalAlignment="Left" Height="40" Margin="35,163,0,0" VerticalAlignment="Top" Width="167" FontWeight="Bold" FontSize="18"/>
+
+        <TextBox x:Name="GameNameBox" HorizontalAlignment="Left" Height="37" Margin="34,203,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" FontSize="24" Text="{Binding Path=CurrGame.Game_Name}" />
+        <TextBox x:Name="YlwPlayerName" HorizontalAlignment="Left" Height="36" Margin="296,244,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" FontSize="24" Text="{Binding Path=YellowPlayer.Player_Name}"  />
+        <TextBox x:Name="GreenPlayerName" HorizontalAlignment="Left" Height="38" Margin="575,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" FontSize="24" Text="{Binding Path=GreenPlayer.Player_Name}" />
+        <TextBox x:Name="BluePlayerName" HorizontalAlignment="Left" Height="38" Margin="574,241,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="169" FontSize="24" Text="{Binding Path=BluePlayer.Player_Name}" />
+        <TextBox x:Name="RedPlayerName" HorizontalAlignment="Left" Height="38" Margin="297,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170" FontSize="24" Text="{Binding Path=RedPlayer.Player_Name}" />
+        <TextBlock x:Name="BlueLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="562,188,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Blue "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+        <TextBlock x:Name="RedLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="284,13,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Red"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+        <TextBlock x:Name="GreenLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="562,13,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Green "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+        <TextBlock x:Name="YlwLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="284,188,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Yellow"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
 
     </Grid>
 </UserControl>

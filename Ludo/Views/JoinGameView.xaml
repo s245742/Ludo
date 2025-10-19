@@ -11,7 +11,7 @@
 
         <DataGrid Name="GamesListData" AutoGenerateColumns="False" Margin="180,15,45,52" ItemsSource="{Binding Path=GamesList}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Game Name" IsReadOnly="true" Width="0.50*" Binding="{Binding Path=Name}" />
+                <DataGridTextColumn x:Name="NameCol" Header="Game Name" IsReadOnly="true" Width="0.50*" Binding="{Binding Path=Game_Name}" />
 
                 <DataGridTemplateColumn Header="Join Game" IsReadOnly="True" Width="0.25*">
                     <DataGridTemplateColumn.CellTemplate>
@@ -24,7 +24,12 @@
                 <DataGridTemplateColumn Header="Delete Game" IsReadOnly="True" Width="0.25*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Margin="2">Delete</Button>
+                            <!-- Relative source is improtant since we are inside a datatemplate, which means we need redefine the datacontext 
+                                By using relative source we look up tree untill we find datagrid.
+                            The datagrids datacontext has our viewmodel whivh has the deletecommand -->
+                            <Button Content="Delete" Command="{Binding DataContext.DeleteGameCommand,
+                            RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                            CommandParameter="{Binding}" />  <!-- gives current dataitem as param-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

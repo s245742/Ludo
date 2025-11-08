@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-namespace Ludo.ViewModels
+namespace Ludo.ViewModels.PreGameViewModels
 {
     public class CreateGameViewModel : GameValidationViewModel
     {
@@ -47,7 +47,7 @@ namespace Ludo.ViewModels
 
         
         //create game trykkes
-        public void Save()
+        private void Save()
         {
             //CHECK VALIDATION ERRORS
             var errors = GetAllErrors().ToList();
@@ -89,16 +89,16 @@ namespace Ludo.ViewModels
 
             //new player
             GamePlayers.Clear();
-            GamePlayers.Add(new Player("Red"));
-            GamePlayers.Add(new Player("Green"));
-            GamePlayers.Add(new Player("Yellow"));
-            GamePlayers.Add(new Player("Blue"));
+            GamePlayers.Add(new Player(PieceColor.Red));
+            GamePlayers.Add(new Player(PieceColor.Green));
+            GamePlayers.Add(new Player(PieceColor.Blue));
+            GamePlayers.Add(new Player(PieceColor.Yellow));
 
             foreach (Player player in GamePlayers)
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 1; i < 5; i++)
                 {
-                    player.PlayerPieces.Add(new GamePiece());
+                    player.PlayerPieces.Add(new Piece(player.Color, i,0));
                 }
             }
 

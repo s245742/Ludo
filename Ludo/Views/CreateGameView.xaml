@@ -4,12 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ludo.Views"
-             xmlns:viewmodels="clr-namespace:Ludo.ViewModels"
+             xmlns:viewmodels="clr-namespace:Ludo.ViewModels.PreGameViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <Viewbox Stretch="Uniform">
-        <Grid Width="800" Height="450">
+        <Grid Width="800" Height="800">
             <!-- Style for TextBox validation -->
             <Grid.Resources>
                 <Style TargetType="TextBox">
@@ -29,24 +29,24 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="btnCreateGame" Content="Create Game"
-            Width="352" Height="50"
-            HorizontalAlignment="Left"
+            Width="552" Height="88"
+            HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Margin="345,364,0,0"
+            Margin="0,675,0,0"
             FontWeight="Bold"  Command="{Binding Path=SaveCommand}"/>
 
-            <Button x:Name="BackToStartBtn" Content="Back to Start " HorizontalAlignment="Left" Height="45" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Command="{Binding NavigateStartScreenCommand}"/>
+            <Button x:Name="BackToStartBtn" Content="Back to Start " HorizontalAlignment="Left" Height="79" Margin="10,10,0,0" VerticalAlignment="Top" Width="162" Command="{Binding NavigateStartScreenCommand}"/>
 
-            <Rectangle x:Name="GrayRect" HorizontalAlignment="Left" Height="135" Margin="13,135,0,0" Fill="LightGray" VerticalAlignment="Top" Width="211"/>
-            <Rectangle x:Name="GreenRect" HorizontalAlignment="Left" Height="170" Margin="522,0,0,0" Fill="Green" VerticalAlignment="Top" Width="275"/>
-            <Rectangle x:Name="RedRect" HorizontalAlignment="Left" Height="170" Margin="244,0,0,0" Fill="Red" VerticalAlignment="Top" Width="275"/>
-            <Rectangle x:Name="YlwRect" HorizontalAlignment="Left" Height="170" Margin="244,174,0,0" Fill="Yellow" VerticalAlignment="Top" Width="275"/>
-            <Rectangle x:Name="BlueRect" HorizontalAlignment="Left" Height="170" Margin="522,174,0,0" Fill="Blue" VerticalAlignment="Top" Width="275"/>
+            <Rectangle x:Name="GrayRect" HorizontalAlignment="Center" Height="100" Margin="0,10,0,0" Fill="Beige" VerticalAlignment="Top" Width="400"/>
+            <Rectangle x:Name="GreenRect" HorizontalAlignment="Left" Height="250" Margin="425,125,0,0" Fill="Green" VerticalAlignment="Top" Width="350"/>
+            <Rectangle x:Name="RedRect" HorizontalAlignment="Left" Height="250" Margin="25,125,0,0" Fill="Red" VerticalAlignment="Top" Width="350"/>
+            <Rectangle x:Name="YlwRect" HorizontalAlignment="Left" Height="250" Margin="25,400,0,0" Fill="Yellow" VerticalAlignment="Top" Width="350"/>
+            <Rectangle x:Name="BlueRect" HorizontalAlignment="Left" Height="250" Margin="425,400,0,0" Fill="Blue" VerticalAlignment="Top" Width="350"/>
 
-            <Label x:Name="GameLabel" Content="Enter Game Name" HorizontalAlignment="Left" Height="40" Margin="35,163,0,0" VerticalAlignment="Top" Width="167" FontWeight="Bold" FontSize="18"/>
+            <Label x:Name="GameLabel" Content="Enter Game Name" HorizontalAlignment="Center" Height="40" Margin="0,15,0,0" VerticalAlignment="Top" Width="168" FontWeight="Bold" FontSize="18"/>
 
-            <TextBox x:Name="GameNameBox" HorizontalAlignment="Left" Height="37" Margin="34,203,0,0" TextWrapping="Wrap"
-                     VerticalAlignment="Top" Width="169" FontSize="24" 
+            <TextBox x:Name="GameNameBox" HorizontalAlignment="Center" Height="37" Margin="0,52,0,0" TextWrapping="Wrap"
+                     VerticalAlignment="Top" Width="300" FontSize="24" 
                      
                      Text="{Binding GameName, UpdateSourceTrigger=PropertyChanged}" />
             <!-- Updatesourcetrigger so update while typing.
@@ -54,26 +54,26 @@
             NotifyOnValidationError=true enables tooltips-->
 
 
-            <TextBox x:Name="YlwPlayerName" HorizontalAlignment="Left" Height="36" Margin="296,244,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="169" FontSize="24" 
+            <TextBox x:Name="YlwPlayerName" HorizontalAlignment="Left" Height="36" Margin="75,500,0,0" TextWrapping="Wrap" 
+                     VerticalAlignment="Top" Width="260" FontSize="24" 
                      Text="{Binding YellowPlayerName, UpdateSourceTrigger=PropertyChanged}"  />
 
-            <TextBox x:Name="GreenPlayerName" HorizontalAlignment="Left" Height="38" Margin="575,66,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="170" FontSize="24" 
+            <TextBox x:Name="GreenPlayerName" HorizontalAlignment="Left" Height="38" Margin="475,250,0,0" TextWrapping="Wrap" 
+                     VerticalAlignment="Top" Width="260" FontSize="24" 
                      Text="{Binding GreenPlayerName, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBox x:Name="BluePlayerName" HorizontalAlignment="Left" Height="38" Margin="574,241,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="169" FontSize="24" 
+            <TextBox x:Name="BluePlayerName" HorizontalAlignment="Left" Height="38" Margin="475,500,0,0" TextWrapping="Wrap" 
+                     VerticalAlignment="Top" Width="260" FontSize="24" 
                      Text="{Binding BluePlayerName, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBox x:Name="RedPlayerName" HorizontalAlignment="Left" Height="38" Margin="297,66,0,0" TextWrapping="Wrap" 
-                     VerticalAlignment="Top" Width="170" FontSize="24" 
+            <TextBox x:Name="RedPlayerName" HorizontalAlignment="Left" Height="38" Margin="75,250,0,0" TextWrapping="Wrap" 
+                     VerticalAlignment="Top" Width="260" FontSize="24" 
                      Text="{Binding RedPlayerName, UpdateSourceTrigger=PropertyChanged}" />
 
-            <TextBlock x:Name="BlueLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="562,188,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Blue "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
-            <TextBlock x:Name="RedLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="284,13,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Red"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
-            <TextBlock x:Name="GreenLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="562,13,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Green "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
-            <TextBlock x:Name="YlwLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="29" Margin="284,188,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Yellow"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+            <TextBlock x:Name="BlueLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="30" Margin="500,425,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Blue "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+            <TextBlock x:Name="RedLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="30" Margin="100,175,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Red"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+            <TextBlock x:Name="GreenLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="30" Margin="500,175,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Green "/><Run Text="Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
+            <TextBlock x:Name="YlwLabel" HorizontalAlignment="Left" TextAlignment="Center" Height="30" Margin="100,425,0,0" Foreground="Black" Background="white" TextWrapping="Wrap" VerticalAlignment="Top"  FontSize="18" Width="196" FontWeight="Bold"><Run Language="da-dk" Text="Yellow"/><Run Text=" Players"/><Run Text=" Name"/><Run Text=" "/></TextBlock>
 
         </Grid>
     </Viewbox>

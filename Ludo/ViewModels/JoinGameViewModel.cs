@@ -2,30 +2,28 @@
 using Ludo.Models;
 using Ludo.Services;
 using Ludo.Stores;
-using System;
-using System.Collections.Generic;
+using Ludo.ViewModels.Base;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Ludo.ViewModels
 {
     public class JoinGameViewModel : ViewModelBase
     {
+        private readonly GameService _gameService;
+        private readonly PlayerService _playerService;
+        private readonly GamePieceService _gamePieceService;
+
         public ICommand NavigateStartScreenCommand { get; }
-        GameService ObjGameService;
-        public JoinGameViewModel(NavigationStore navigationStore)
+
+        private RelayCommand<Game> deleteGameCommand;
+        public RelayCommand<Game> DeleteGameCommand
         {
-            //navigation
-            this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => new StartScreenViewModel(navigationStore));
-            ObjGameService = new GameService();
-            LoadData();
-            deleteGameCommand = new RelayCommand<Game>(DeleteGame);
+            get { return deleteGameCommand; }
         }
 
-        #region Display games
         private ObservableCollection<Game> gamesList;
         public ObservableCollection<Game> GamesList
         {
@@ -33,34 +31,71 @@ namespace Ludo.ViewModels
             set { gamesList = value; OnPropertyChanged("GamesList"); }
         }
 
+        private RelayCommand<Game> joinGameCommand;
+        public RelayCommand<Game> JoinGameCommand
+        {
+            get { return joinGameCommand; }
+        }
+
+
+        public JoinGameViewModel(NavigationStore navigationStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
+        {
+            _gameService = new GameService();
+            _playerService = new PlayerService();
+            _gamePieceService = new GamePieceService();
+            
+            //navigation
+            this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
+            //commands
+            deleteGameCommand = new RelayCommand<Game>(DeleteGame);
+            joinGameCommand = new RelayCommand<Game>(JoinGame);
+
+            LoadData();
+        }
+
+        
         //helpermethod display games
         private void LoadData()
         {
-            GamesList = ObjGameService.getAll();
+            GamesList = _gameService.getAll();
         }
-        #endregion
-
-        #region Delete games
-        private RelayCommand<Game> deleteGameCommand;
-
-        public RelayCommand<Game> DeleteGameCommand
-        {
-            get { return deleteGameCommand; }
-        }
+        
 
         //param game is passed with command.parameter (note we need a generic relaycommand here sicne delete taks a param)
         public void DeleteGame(Game game)
         {
-            //call gameservice
-            Console.WriteLine(game.Game_Name);
-            LoadData(); //reload displays
-
+            var result = MessageBox.Show($"Are you sure you want to delete game \"{game.Game_Name}\"?",
+                         "Confirmation",
+                         MessageBoxButton.YesNo,
+                         MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                //call gameservices (Should be transaction, but w/e)
+                _gamePieceService.deleteGamePiecesfromGame(game);
+                _playerService.deletePlayersfromGame(game);
+                _gameService.delete(game);
+                LoadData(); //reload displays
+            }
         }
 
+        public void JoinGame(Game game)
+        {
+            //Get player list
+            ObservableCollection<Player> GamePlayers = _playerService.getAllPlayersFromGame(game);
+            //
+            foreach (Player player in GamePlayers)
+            {
+                ObservableCollection<GamePiece> gp = new ObservableCollection<GamePiece>();
+                   gp = _gamePieceService.getAllGamePieceFromPlayer(player);
+                foreach (GamePiece gamepiece in gp)
+                {
+                    player.PlayerPieces.Add(gamepiece);
+                }
+               
+            }
+           // we now have loaded the player and playerpieces which we can serialize to make game :)
 
-
-        #endregion
-
+        }
 
 
 

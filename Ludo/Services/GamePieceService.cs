@@ -1,30 +1,34 @@
 ﻿using Ludo.Models;
-using System.Collections.ObjectModel;
 using Microsoft.Data.SqlClient;
-
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Ludo.Services
 {
-    
-    public class GameService : ServiceBase
+    public class GamePieceService : ServiceBase
     {
-
-        #region createGame
-        public bool CreateGame(Game game)
+        
+        #region CreateGamePiece
+        public bool CreateGamePiece(GamePiece gamePiece)
         {
-            string query = "insert into game values (@Game_Name)";
+            string query = "insert into Game_Piece values (@Player_ID, @Board_Pos)";
             int rowsAffected = 0;
             using (SqlConnection connection = new SqlConnection(connectionString))
-             {
+            {
                 SqlCommand command = new SqlCommand(query, connection);
-
-                command.Parameters.AddWithValue("@Game_Name", game.Game_Name);
+               
+                command.Parameters.AddWithValue("@Player_ID", gamePiece.Player_ID);
+                command.Parameters.AddWithValue("@Board_Pos", gamePiece.Board_Pos);
+                
                 try
                 {
                     connection.Open();
                     rowsAffected = command.ExecuteNonQuery();
                     return rowsAffected > 0; //true if updated rows
-
                 }
                 catch (Exception ex)
                 {
@@ -34,18 +38,13 @@ namespace Ludo.Services
             }
 
 
-             
-
-
         }
         #endregion
-
-        #region deleteGame
-        public bool delete(Game game)
+        public bool deleteGamePiecesfromGame(Game game)
         {
-            string query = "delete from Game where Game_Name = @Game_Name";
+            string query = "delete Game_Piece from Game_Piece join Player on Player_ID = Player.ID where Game_Name = @Game_Name";
             int rowsAffected = 0;
-            using (SqlConnection connection = new SqlConnection( connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Game_Name", game.Game_Name);
@@ -63,37 +62,39 @@ namespace Ludo.Services
 
             }
         }
-        #endregion
-
-        #region displayGame
-        public ObservableCollection<Game> getAll()
+        
+        public ObservableCollection<GamePiece> getAllGamePieceFromPlayer(Player player)
         {
-            var gamesList = new ObservableCollection<Game>();
-            string query = "SELECT Game_Name FROM Game";
+            var gpList = new ObservableCollection<GamePiece>();
+            string query = "SELECT Player_ID,Board_Pos FROM Game_Piece join Player on Game_Piece.Player_ID = Player.id where player.Game_Name = @game_Name AND player.color = @color";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(query, connection);
-
+                command.Parameters.AddWithValue("@game_Name", player.Game_Name);
+                command.Parameters.AddWithValue("@color", player.Color);
                 try
                 {
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
 
-                    while (reader.Read()) {
-                        gamesList.Add(new Game
-                        {
-                            Game_Name = reader.GetString(0)
-                        });
+                    while (reader.Read())
+                    {
+                        GamePiece gp = new GamePiece();
+                        gp.Player_ID = reader.GetInt32(0);
+                        gp.Board_Pos = reader.GetInt32(1);
+                        gpList.Add(gp);
                     }
-                    reader.Close(); 
-                } catch (Exception ex)
+                    reader.Close();
+                }
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
             }
-            return gamesList;
+            return gpList;
         }
-        #endregion
+
+        
 
     }
 }

@@ -6,10 +6,12 @@
              xmlns:local="clr-namespace:Ludo.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Button Content="Join existing Game" HorizontalAlignment="Left" Height="70" Margin="70,0,0,0" VerticalAlignment="Center" Width="168" Command="{Binding NavigateJoinGameCommand}" />
-        <Button Content="Create new Game" HorizontalAlignment="Left" Height="70" Margin="536,0,0,0" VerticalAlignment="Center" Width="168" Command="{Binding NavigateCreateGameCommand}"/>
-        <Label Content="Ludo WPF Application" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="45" Width="287" FontSize="25" FontWeight="Bold"/>
+    <Viewbox Stretch="Uniform">
+        <Grid Width="800" Height="450">
+            <Button Content="Join existing Game" HorizontalAlignment="Left" Height="126" Margin="460,0,0,0" VerticalAlignment="Center" Width="300" Command="{Binding NavigateJoinGameCommand}" />
+            <Button Content="Create new Game" HorizontalAlignment="Left" Height="126" Margin="40,0,0,0" VerticalAlignment="Center" Width="300" Command="{Binding NavigateCreateGameCommand}"/>
+            <Label Content="Ludo WPF Application" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="45" Width="287" FontSize="25" FontWeight="Bold"/>
 
-    </Grid>
+        </Grid>
+    </Viewbox>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Ludo.ViewModels;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,9 +17,10 @@ namespace Ludo
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainViewModel mainViewModel)
         {
             InitializeComponent();
+            DataContext = mainViewModel;
         }
     }
 }

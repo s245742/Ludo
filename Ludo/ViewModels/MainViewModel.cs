@@ -1,23 +1,19 @@
 ﻿using Ludo.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ludo.ViewModels.Base;
 
 namespace Ludo.ViewModels
 {
     //MainWindows viewmodel
     public class MainViewModel : ViewModelBase
     {
-        private readonly NavigationStore navigationStore;
+        private readonly NavigationStore _navigationStore;
 
-        public ViewModelBase CurrentViewModel => navigationStore.CurrentViewModel; //get viewmodel from navstore
+        public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel; //get viewmodel from navstore
 
         public MainViewModel(NavigationStore navigationStore)  
         {
-            this.navigationStore = navigationStore;
-            navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
+            _navigationStore = navigationStore;
+            _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
         }
 
         private void OnCurrentViewModelChanged()

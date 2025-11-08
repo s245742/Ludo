@@ -1,4 +1,4 @@
-﻿using Ludo.ViewModels;
+﻿using Ludo.ViewModels.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;

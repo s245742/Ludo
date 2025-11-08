@@ -9,14 +9,21 @@
     <Grid>
         <Button Content="Back to Start " HorizontalAlignment="Left" Height="45" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Command="{Binding NavigateStartScreenCommand}"/>
 
-        <DataGrid Name="GamesListData" AutoGenerateColumns="False" Margin="180,15,45,52" ItemsSource="{Binding Path=GamesList}">
+        <DataGrid Name="GamesListData" CanUserAddRows="False" AutoGenerateColumns="False" Margin="180,15,45,52" ItemsSource="{Binding Path=GamesList}">
+            <!--Dont show list when Gameslist is empty -->
+            
+
+
+
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="NameCol" Header="Game Name" IsReadOnly="true" Width="0.50*" Binding="{Binding Path=Game_Name}" />
 
                 <DataGridTemplateColumn Header="Join Game" IsReadOnly="True" Width="0.25*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Margin="2">Join</Button>
+                            <Button Content="Join" Command="{Binding DataContext.JoinGameCommand,
+RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+CommandParameter="{Binding}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -33,10 +40,22 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
-
             </DataGrid.Columns>
-            
+          
         </DataGrid>
+<!-- Show msg when no games created-->
+        <TextBlock Text="No games are created yet. Created games will be shown here." Margin="190,60,45,52" FontSize="16" Foreground="Black">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding GamesList.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
     </Grid>
 </UserControl>

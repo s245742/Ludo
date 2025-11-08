@@ -1,10 +1,7 @@
 ﻿using Ludo.Commands;
 using Ludo.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ludo.ViewModels.Base;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
 
 namespace Ludo.ViewModels
@@ -17,9 +14,9 @@ namespace Ludo.ViewModels
 
         public StartScreenViewModel(NavigationStore navigationStore)
         {
-            //nav to game view model
-            this.NavigateCreateGameCommand = new NavigateCommand<CreateGameViewModel>(navigationStore, () => new CreateGameViewModel(navigationStore)); 
-            this.NavigateJoinGameCommand = new NavigateCommand<JoinGameViewModel>(navigationStore, () => new JoinGameViewModel(navigationStore));
+            
+            this.NavigateCreateGameCommand = new NavigateCommand<CreateGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<CreateGameViewModel>()); 
+            this.NavigateJoinGameCommand = new NavigateCommand<JoinGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<JoinGameViewModel>());
         }
 
     }

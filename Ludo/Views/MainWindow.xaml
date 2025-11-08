@@ -4,21 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ludo"
-        xmlns:viewmodels="clr-namespace:Ludo.ViewModels"
+        xmlns:preGameViewModels="clr-namespace:Ludo.ViewModels.PreGameViewModels"
+        xmlns:inGameViewModels="clr-namespace:Ludo.ViewModels.InGameViewModels"
         xmlns:views="clr-namespace:Ludo.Views"
+        
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" >
+        Title="MainWindow" Height="800" Width="800" >
 
     <ContentControl Content="{Binding CurrentViewModel}" > <!-- now render but need mapping, we do  that with datatemplates -->
         <ContentControl.Resources>
-            <DataTemplate DataType="{x:Type viewmodels:CreateGameViewModel}"> <!-- here gameviewmodel is mapped to startscreen view -->
+            <DataTemplate DataType="{x:Type preGameViewModels:CreateGameViewModel}"> <!-- here gameviewmodel is mapped to startscreen view -->
                 <views:CreateGameView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewmodels:StartScreenViewModel}">
+            <DataTemplate DataType="{x:Type preGameViewModels:StartScreenViewModel}">
                 <views:StartScreenView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewmodels:JoinGameViewModel}">
+            <DataTemplate DataType="{x:Type preGameViewModels:JoinGameViewModel}">
                 <views:JoinGameView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type inGameViewModels:GameViewModel}">
+                <views:GameView/>
             </DataTemplate>
         </ContentControl.Resources>
         

@@ -1,6 +1,7 @@
 ﻿using Ludo.Services;
 using Ludo.Stores;
-using Ludo.ViewModels;
+using Ludo.ViewModels.InGameViewModels;
+using Ludo.ViewModels.PreGameViewModels;
 using Ludo.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -20,8 +21,9 @@ namespace Ludo
             //setup dependency injection for services
             var services = new ServiceCollection(); //DI container
 
-            //DI register navigation store
+            //DI register navigation og currentPlayers store
             services.AddSingleton<NavigationStore>();
+            services.AddSingleton<CurrPlayersStore>();
 
             //DI register services
             services.AddSingleton<GameService>();
@@ -34,6 +36,7 @@ namespace Ludo
             services.AddTransient<JoinGameViewModel>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainWindow>();
+            services.AddTransient<GameViewModel>();
 
             //finallize DI 
             ServiceProvider = services.BuildServiceProvider();

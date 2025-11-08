@@ -9,18 +9,18 @@ namespace Ludo.Models
 {
     public class Player
     {
-        public ObservableCollection<GamePiece> PlayerPieces { get; }
-
+        public ObservableCollection<Piece> PlayerPieces { get; }
+        
         public int Player_ID { get; set; }
         public string Game_Name { get; set; }
         public string Player_Name { get; set; }
 
-        public  string Color { get; set; }
+        public  PieceColor Color { get; set; }
         
-        public Player(String color)
+        public Player(PieceColor color)
         {
             this.Color = color;
-            PlayerPieces = new ObservableCollection<GamePiece>();
+            PlayerPieces = new ObservableCollection<Piece>();
         }
 
 

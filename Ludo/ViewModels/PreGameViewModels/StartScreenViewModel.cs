@@ -4,7 +4,7 @@ using Ludo.ViewModels.Base;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
 
-namespace Ludo.ViewModels
+namespace Ludo.ViewModels.PreGameViewModels
 {
     public class StartScreenViewModel : ViewModelBase
     {
@@ -15,8 +15,8 @@ namespace Ludo.ViewModels
         public StartScreenViewModel(NavigationStore navigationStore)
         {
             
-            this.NavigateCreateGameCommand = new NavigateCommand<CreateGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<CreateGameViewModel>()); 
-            this.NavigateJoinGameCommand = new NavigateCommand<JoinGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<JoinGameViewModel>());
+            NavigateCreateGameCommand = new NavigateCommand<CreateGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<CreateGameViewModel>()); 
+            NavigateJoinGameCommand = new NavigateCommand<JoinGameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<JoinGameViewModel>());
         }
 
     }

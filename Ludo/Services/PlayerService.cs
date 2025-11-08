@@ -28,7 +28,7 @@ namespace Ludo.Services
             {
                         // Convert the returned to the Player model's ID
                         player.Player_ID = Convert.ToInt32(newId);
-                        foreach (GamePiece p in player.PlayerPieces)
+                        foreach (Piece p in player.PlayerPieces)
                         {
                             p.Player_ID = player.Player_ID; //Must reflect the DB's Id
                         }
@@ -86,7 +86,8 @@ namespace Ludo.Services
 
                     while (reader.Read())
                     {
-                        Player p = new Player(reader.GetString(0));
+                        int pColor = reader.GetInt32(0);
+                        Player p = new Player((PieceColor) pColor);
                         p.Game_Name = reader.GetString(1);
                         p.Player_Name = reader.GetString(2);
                         

@@ -1,4 +1,4 @@
-﻿using Ludo.ViewModels;
+﻿using Ludo.ViewModels.PreGameViewModels;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;

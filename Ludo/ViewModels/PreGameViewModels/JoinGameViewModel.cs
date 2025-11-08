@@ -3,12 +3,14 @@ using Ludo.Models;
 using Ludo.Services;
 using Ludo.Stores;
 using Ludo.ViewModels.Base;
+using Ludo.ViewModels.InGameViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
+
 using System.Windows;
 using System.Windows.Input;
 
-namespace Ludo.ViewModels
+namespace Ludo.ViewModels.PreGameViewModels
 {
     public class JoinGameViewModel : ViewModelBase
     {
@@ -17,6 +19,7 @@ namespace Ludo.ViewModels
         private readonly GamePieceService _gamePieceService;
 
         public ICommand NavigateStartScreenCommand { get; }
+        public ICommand NavigateToGameCommand { get; }
 
         private RelayCommand<Game> deleteGameCommand;
         public RelayCommand<Game> DeleteGameCommand
@@ -37,18 +40,25 @@ namespace Ludo.ViewModels
             get { return joinGameCommand; }
         }
 
+        private CurrPlayersStore _currPlayersStore;
 
-        public JoinGameViewModel(NavigationStore navigationStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
+
+
+
+        public JoinGameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
         {
             _gameService = new GameService();
             _playerService = new PlayerService();
             _gamePieceService = new GamePieceService();
-            
+            _currPlayersStore = currPlayersStore;
+
             //navigation
-            this.NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
+            NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
+            NavigateToGameCommand = new NavigateCommand<GameViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<GameViewModel>());
             //commands
             deleteGameCommand = new RelayCommand<Game>(DeleteGame);
             joinGameCommand = new RelayCommand<Game>(JoinGame);
+            
 
             LoadData();
         }
@@ -85,15 +95,20 @@ namespace Ludo.ViewModels
             //
             foreach (Player player in GamePlayers)
             {
-                ObservableCollection<GamePiece> gp = new ObservableCollection<GamePiece>();
+                ObservableCollection<Piece> gp = new ObservableCollection<Piece>();
                    gp = _gamePieceService.getAllGamePieceFromPlayer(player);
-                foreach (GamePiece gamepiece in gp)
+                foreach (Piece gamepiece in gp)
                 {
                     player.PlayerPieces.Add(gamepiece);
                 }
                
             }
-           // we now have loaded the player and playerpieces which we can serialize to make game :)
+
+            // we now have loaded the player and playerpieces which we can serialize to make game :)
+            //send over gameplayers
+            _currPlayersStore.SetPlayers(GamePlayers);
+            NavigateToGameCommand.Execute(null);
+
 
         }
 

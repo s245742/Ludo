@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 
-namespace LudoClient.Services
+namespace LudoServer.Services
 {
     public abstract class ServiceBase
     {

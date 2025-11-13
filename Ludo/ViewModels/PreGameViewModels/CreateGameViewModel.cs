@@ -1,8 +1,12 @@
-﻿using Ludo.Commands;
-using Ludo.Models;
-using Ludo.Services;
-using Ludo.Stores;
-using Ludo.ViewModels.Base;
+﻿using Ludo;
+using SharedModels.Models;
+using SharedModels.TransferMsg;
+using LudoClient.ViewModels.Base;
+using LudoClient;
+using LudoClient.Commands;
+using LudoClient.Models;
+using LudoClient.Services;
+using LudoClient.Stores;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -14,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-namespace Ludo.ViewModels.PreGameViewModels
+namespace LudoClient.ViewModels.PreGameViewModels
 {
     public class CreateGameViewModel : GameValidationViewModel
     {
@@ -27,8 +31,8 @@ namespace Ludo.ViewModels.PreGameViewModels
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
 
         public RelayCommand SaveCommand { get; }
-        
 
+        public RelayCommand TestConnectionCommand { get; }
 
         public CreateGameViewModel(NavigationStore navigationStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
         {
@@ -43,9 +47,47 @@ namespace Ludo.ViewModels.PreGameViewModels
             InitalizeNewGame();
 
             SaveCommand = new RelayCommand(Save);
+
+            TestConnectionCommand = new RelayCommand(async () => await TestServerConnection());
         }
 
-        
+        private async Task TestServerConnection()
+        {
+            //CHECK VALIDATION ERRORS
+            var errors = GetAllErrors().ToList();
+            if (checkIfGameNameExists(CurrGame.Game_Name))
+                errors.Add("Game Name already exists, try another");
+
+            
+            if (errors.Any())
+            {
+                string message = string.Join("\n", errors);
+                System.Windows.MessageBox.Show(message, "Validation Errors");
+                return;
+            }
+            //Send
+            try
+            {
+                var network = new NetworkService();
+                await network.ConnectAsync("127.0.0.1", 5000);
+
+                var envelope = new MessageEnvelope
+                {
+                    MessageType = "CreateNewGame",
+                    Payload = System.Text.Json.JsonSerializer.Serialize(CurrGame)
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(envelope);
+                // Send JSON to server
+                await network.SendMessageAsync(json);
+
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Connection failed: {ex.Message}");
+            }
+        }
+
+
         //create game trykkes
         private void Save()
         {
@@ -79,8 +121,6 @@ namespace Ludo.ViewModels.PreGameViewModels
 
 
         }
-        
-
 
         private void InitalizeNewGame()
         {

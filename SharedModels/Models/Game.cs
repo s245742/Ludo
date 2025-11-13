@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.ComponentModel;
-namespace Ludo.Models
+namespace SharedModels.Models
 {
     public class Game 
     {
 
-        private String game_name;
+        private string game_name;
 
-        public String Game_Name 
+        public string Game_Name 
         {
             get { return game_name; }
             set { game_name = value;}

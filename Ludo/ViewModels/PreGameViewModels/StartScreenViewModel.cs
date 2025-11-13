@@ -1,10 +1,11 @@
-﻿using Ludo.Commands;
-using Ludo.Stores;
-using Ludo.ViewModels.Base;
+﻿using Ludo;
+using LudoClient.Commands;
+using LudoClient.Stores;
+using LudoClient.ViewModels.Base;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
 
-namespace Ludo.ViewModels.PreGameViewModels
+namespace LudoClient.ViewModels.PreGameViewModels
 {
     public class StartScreenViewModel : ViewModelBase
     {

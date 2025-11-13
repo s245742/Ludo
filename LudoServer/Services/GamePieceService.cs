@@ -1,6 +1,5 @@
-﻿using LudoClient.Models;
+﻿using SharedModels.Models;
 using Microsoft.Data.SqlClient;
-using SharedModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LudoClient.Services
+namespace LudoServer.Services
 {
     public class GamePieceService : ServiceBase
     {

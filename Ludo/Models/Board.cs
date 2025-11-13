@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SharedModels.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Models
+namespace LudoClient.Models
 {
     public class Board
     {

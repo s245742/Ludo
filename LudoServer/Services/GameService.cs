@@ -1,9 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using SharedModels.Models;
+using System.Collections.ObjectModel;
 using Microsoft.Data.SqlClient;
-using LudoClient.Models;
-using SharedModels.Models;
 
-namespace LudoClient.Services
+
+namespace LudoServer.Services
 {
     
     public class GameService : ServiceBase

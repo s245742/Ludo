@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Ludo.Commands
+namespace LudoClient.Commands
 {
     public class RelayCommand : ICommand
     {

@@ -1,14 +1,16 @@
-﻿using Ludo.Commands;
-using Ludo.Models;
-using Ludo.Services;
-using Ludo.Stores;
-using Ludo.ViewModels.Base;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Ludo.ViewModels.PreGameViewModels;
+using Ludo;
+using LudoClient.Services;
+using LudoClient.Stores;
+using LudoClient.Models;
+using LudoClient.ViewModels.Base;
+using LudoClient.ViewModels.PreGameViewModels;
+using LudoClient.Commands;
+using SharedModels.Models;
 
-namespace Ludo.ViewModels.InGameViewModels
+namespace LudoClient.ViewModels.InGameViewModels
 {
     public class GameViewModel : ViewModelBase
     {

@@ -1,8 +1,8 @@
-﻿using Ludo.Services;
-using Ludo.Stores;
-using Ludo.ViewModels.InGameViewModels;
-using Ludo.ViewModels.PreGameViewModels;
-using Ludo.Views;
+﻿using Ludo.Views;
+using LudoClient.Services;
+using LudoClient.Stores;
+using LudoClient.ViewModels.InGameViewModels;
+using LudoClient.ViewModels.PreGameViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;

@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Media;
-using Ludo.Models;
 using System.Collections.ObjectModel;
+using LudoClient.Models;
+using SharedModels.Models;
 
 
-namespace Ludo.ViewModels.InGameViewModels
+namespace LudoClient.ViewModels.InGameViewModels
 {
     public class BoardCellViewModel : INotifyPropertyChanged
     {

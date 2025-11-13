@@ -1,4 +1,5 @@
-﻿using Ludo.Models;
+﻿using LudoClient.Models;
+using SharedModels.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace Ludo.ViewModels.InGameViewModels
+namespace LudoClient.ViewModels.InGameViewModels
 {
     public class PieceViewModel
     {

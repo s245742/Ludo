@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Models
+namespace SharedModels.Models
 {
     public class Player
     {
@@ -19,7 +19,7 @@ namespace Ludo.Models
         
         public Player(PieceColor color)
         {
-            this.Color = color;
+            Color = color;
             PlayerPieces = new ObservableCollection<Piece>();
         }
 

@@ -1,7 +1,7 @@
-﻿using Ludo.Stores;
-using Ludo.ViewModels.Base;
+﻿using LudoClient.Stores;
+using LudoClient.ViewModels.Base;
 
-namespace Ludo.ViewModels.PreGameViewModels
+namespace LudoClient.ViewModels.PreGameViewModels
 {
     //MainWindows viewmodel
     public class MainViewModel : ViewModelBase

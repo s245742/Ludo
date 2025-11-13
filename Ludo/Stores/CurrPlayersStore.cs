@@ -1,6 +1,6 @@
-﻿using Ludo.Models;
-using Ludo.Services;
-using Ludo.ViewModels.Base;
+﻿using LudoClient.Services;
+using LudoClient.ViewModels.Base;
+using SharedModels.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Stores
+namespace LudoClient.Stores
 {
     
     public class CurrPlayersStore : ViewModelBase

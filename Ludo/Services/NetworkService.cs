@@ -18,18 +18,35 @@ namespace LudoClient.Services
             Console.WriteLine("Connected to server!");
         }
 
-        public async Task SendMessageAsync(string message)
+        public async Task<string> SendMessageAsync(string message)
         {
-            if (_stream == null) return;
+            if (_stream == null) return "not connected";
 
+            //Convert message to bytes
             var data = Encoding.UTF8.GetBytes(message);
+            var lengthBytes = BitConverter.GetBytes(data.Length);
+
+            //Send 4-byte length prefix + data
+            await _stream.WriteAsync(lengthBytes, 0, lengthBytes.Length);
             await _stream.WriteAsync(data, 0, data.Length);
 
-            //read the respons
-            var buffer = new byte[1024];
-            int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
-            string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            Console.WriteLine($"Server response: {response}");
+            // Read 4-byte length prefix
+            var lenBuffer = new byte[4];
+            int read = await _stream.ReadAsync(lenBuffer, 0, 4);
+            if (read < 4) throw new Exception("Failed to read message length from server");
+
+            int responseLength = BitConverter.ToInt32(lenBuffer, 0);
+            var responseBuffer = new byte[responseLength];
+            int totalRead = 0;
+
+            while (totalRead < responseLength)
+            {
+                int chunk = await _stream.ReadAsync(responseBuffer, totalRead, responseLength - totalRead);
+                if (chunk == 0) throw new Exception("Server disconnected during message read");
+                totalRead += chunk;
+            }
+
+            return Encoding.UTF8.GetString(responseBuffer);
         }
     }
 }

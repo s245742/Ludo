@@ -9,6 +9,6 @@ namespace LudoServer.Handlers
     public interface IMessageHandler
     {
         string MessageType { get; }
-        Task HandleAsync(string payload);
+        Task<string> HandleAsync(string payload);
     }
 }

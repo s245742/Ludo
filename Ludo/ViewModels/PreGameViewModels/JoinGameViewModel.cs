@@ -7,19 +7,17 @@ using LudoClient.ViewModels.Base;
 using LudoClient.ViewModels.InGameViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using SharedModels.Models;
+using SharedModels.TransferMsg;
 using System.Collections.ObjectModel;
 
 using System.Windows;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LudoClient.ViewModels.PreGameViewModels
 {
     public class JoinGameViewModel : ViewModelBase
     {
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
-        private readonly GamePieceService _gamePieceService;
-
         public ICommand NavigateStartScreenCommand { get; }
         public ICommand NavigateToGameCommand { get; }
 
@@ -44,14 +42,8 @@ namespace LudoClient.ViewModels.PreGameViewModels
 
         private CurrPlayersStore _currPlayersStore;
 
-
-
-
-        public JoinGameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
+        public JoinGameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore)
         {
-            _gameService = new GameService();
-            _playerService = new PlayerService();
-            _gamePieceService = new GamePieceService();
             _currPlayersStore = currPlayersStore;
 
             //navigation
@@ -60,21 +52,43 @@ namespace LudoClient.ViewModels.PreGameViewModels
             //commands
             deleteGameCommand = new RelayCommand<Game>(DeleteGame);
             joinGameCommand = new RelayCommand<Game>(JoinGame);
-            
-
+            //load games
             LoadData();
         }
 
         
-        //helpermethod display games
-        private void LoadData()
+        //display games
+        private async void LoadData()
         {
-            GamesList = _gameService.getAll();
+            //Send
+            try
+            {
+                var network = new NetworkService();
+                await network.ConnectAsync("127.0.0.1", 5000);
+
+                var envelope = new MessageEnvelope
+                {
+                    MessageType = "GetAllGames",
+                    Payload = System.Text.Json.JsonSerializer.Serialize("empty")
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(envelope);
+                //Send and receive json of games
+                var res = await network.SendMessageAsync(json);
+
+                var gamesList = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(res);
+                //display
+                GamesList = new ObservableCollection<Game>(gamesList);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Connection failed: {ex.Message}");
+            }
+            
         }
         
 
         //param game is passed with command.parameter (note we need a generic relaycommand here sicne delete taks a param)
-        public void DeleteGame(Game game)
+        public async void DeleteGame(Game game)
         {
             var result = MessageBox.Show($"Are you sure you want to delete game \"{game.Game_Name}\"?",
                          "Confirmation",
@@ -82,35 +96,54 @@ namespace LudoClient.ViewModels.PreGameViewModels
                          MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                //call gameservices (Should be transaction, but w/e)
-                _gamePieceService.deleteGamePiecesfromGame(game);
-                _playerService.deletePlayersfromGame(game);
-                _gameService.delete(game);
+                
+                try
+                {
+                    var network = new NetworkService();
+                    await network.ConnectAsync("127.0.0.1", 5000);
+
+                    var envelope = new MessageEnvelope
+                    {
+                        MessageType = "DeleteGame",
+                        Payload = System.Text.Json.JsonSerializer.Serialize(game)
+                    };
+                    var json = System.Text.Json.JsonSerializer.Serialize(envelope);
+                    //Send json of game
+                    await network.SendMessageAsync(json);
+
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Connection failed: {ex.Message}");
+                }
                 LoadData(); //reload displays
             }
         }
 
-        public void JoinGame(Game game)
+        public async void JoinGame(Game game)
         {
-            //Get player list
-            ObservableCollection<Player> GamePlayers = _playerService.getAllPlayersFromGame(game);
-            //
-            foreach (Player player in GamePlayers)
+            try
             {
-                ObservableCollection<Piece> gp = new ObservableCollection<Piece>();
-                   gp = _gamePieceService.getAllGamePieceFromPlayer(player);
-                foreach (Piece gamepiece in gp)
+                var network = new NetworkService();
+                await network.ConnectAsync("127.0.0.1", 5000);
+
+                var envelope = new MessageEnvelope
                 {
-                    player.PlayerPieces.Add(gamepiece);
-                }
-               
+                    MessageType = "JoinGame",
+                    Payload = System.Text.Json.JsonSerializer.Serialize(game)
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(envelope);
+                //Send json of game
+                var res = await network.SendMessageAsync(json);
+                var gamePlayersList = System.Text.Json.JsonSerializer.Deserialize<List<Player>>(res);
+                ObservableCollection<Player> GamePlayers = new ObservableCollection<Player>(gamePlayersList);
+                _currPlayersStore.SetPlayers(GamePlayers);
+                NavigateToGameCommand.Execute(null);
             }
-
-            // we now have loaded the player and playerpieces which we can serialize to make game :)
-            //send over gameplayers
-            _currPlayersStore.SetPlayers(GamePlayers);
-            NavigateToGameCommand.Execute(null);
-
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Connection failed: {ex.Message}");
+            }
 
         }
 

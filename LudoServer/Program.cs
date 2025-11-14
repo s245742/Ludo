@@ -15,6 +15,9 @@ class Program
 
         //Handler as singleton
         services.AddSingleton<IMessageHandler, CreateGameHandler>();
+        services.AddSingleton<IMessageHandler, GetAllGamesHandler>();
+        services.AddSingleton<IMessageHandler, DeleteGameHandler>();
+        services.AddSingleton<IMessageHandler, JoinGameHandler>();
 
         //set TCPserver singleton and inject the others
         services.AddSingleton<HandlerStore>(serviceProvider =>

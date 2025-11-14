@@ -36,7 +36,6 @@
             FontWeight="Bold"  Command="{Binding Path=SaveCommand}"/>
 
             <Button x:Name="BackToStartBtn" Content="Back to Start " HorizontalAlignment="Left" Height="79" Margin="10,10,0,0" VerticalAlignment="Top" Width="162" Command="{Binding NavigateStartScreenCommand}"/>
-            <Button x:Name="conn" Content="conn " HorizontalAlignment="Left" Height="79" Margin="599,5,0,0" VerticalAlignment="Top" Width="162" Command="{Binding TestConnectionCommand}"/>
             <Rectangle x:Name="GrayRect" HorizontalAlignment="Center" Height="100" Margin="0,10,0,0" Fill="Beige" VerticalAlignment="Top" Width="400"/>
             <Rectangle x:Name="GreenRect" HorizontalAlignment="Left" Height="250" Margin="425,125,0,0" Fill="Green" VerticalAlignment="Top" Width="350"/>
             <Rectangle x:Name="RedRect" HorizontalAlignment="Left" Height="250" Margin="25,125,0,0" Fill="Red" VerticalAlignment="Top" Width="350"/>

@@ -9,7 +9,7 @@ namespace SharedModels.Models
 {
     public class Player
     {
-        public ObservableCollection<Piece> PlayerPieces { get; }
+        public ObservableCollection<Piece> PlayerPieces { get; set; }
         
         public int Player_ID { get; set; }
         public string Game_Name { get; set; }

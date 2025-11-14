@@ -18,28 +18,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using SharedModels.Models.DTO;
 namespace LudoClient.ViewModels.PreGameViewModels
 {
     public class CreateGameViewModel : GameValidationViewModel
     {
 
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
-        private readonly GamePieceService _gamePieceService;
         public ICommand NavigateStartScreenCommand { get; }
-
-        private ObservableCollection<Game> games = new ObservableCollection<Game>();
-
         public RelayCommand SaveCommand { get; }
 
-        public RelayCommand TestConnectionCommand { get; }
-
-        public CreateGameViewModel(NavigationStore navigationStore, GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
+        public CreateGameViewModel(NavigationStore navigationStore)
         {
-            _gameService = gameService;
-            _playerService = playerService;
-            _gamePieceService = gamePieceService;
-
+           
             //navigation
             NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore,
                 () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>()); //navigate to startscreen (DI makes complex to get viewmodel)
@@ -48,23 +38,33 @@ namespace LudoClient.ViewModels.PreGameViewModels
 
             SaveCommand = new RelayCommand(Save);
 
-            TestConnectionCommand = new RelayCommand(async () => await TestServerConnection());
         }
 
-        private async Task TestServerConnection()
+        
+        //create game trykkes
+        private async void Save()
         {
-            //CHECK VALIDATION ERRORS
+            //CHECK inital VALIDATION ERRORS
             var errors = GetAllErrors().ToList();
-            if (checkIfGameNameExists(CurrGame.Game_Name))
-                errors.Add("Game Name already exists, try another");
-
-            
             if (errors.Any())
             {
                 string message = string.Join("\n", errors);
                 System.Windows.MessageBox.Show(message, "Validation Errors");
                 return;
             }
+
+            //create dto
+            foreach (var player in GamePlayers)
+            {
+                player.Game_Name = CurrGame.Game_Name; //make them match before send over to dto
+            }
+
+            CreateGameDTO DTO = new CreateGameDTO
+            {
+                Game = CurrGame,
+                Players = GamePlayers.ToList()
+            };
+
             //Send
             try
             {
@@ -74,48 +74,25 @@ namespace LudoClient.ViewModels.PreGameViewModels
                 var envelope = new MessageEnvelope
                 {
                     MessageType = "CreateNewGame",
-                    Payload = System.Text.Json.JsonSerializer.Serialize(CurrGame)
+                    Payload = System.Text.Json.JsonSerializer.Serialize(DTO)
                 };
                 var json = System.Text.Json.JsonSerializer.Serialize(envelope);
-                // Send JSON to server
-                await network.SendMessageAsync(json);
+                //Send JSON to server
+                var res = await network.SendMessageAsync(json);
+
+                //error
+                if (res.Equals("error, GameName already exists"))
+                {
+                    errors.Add("Game Name already exists, try another");
+                    string message = string.Join("\n", errors);
+                    System.Windows.MessageBox.Show(message, "Validation Errors");
+                    return;
+                }
 
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"Connection failed: {ex.Message}");
-            }
-        }
-
-
-        //create game trykkes
-        private void Save()
-        {
-            //CHECK VALIDATION ERRORS
-            var errors = GetAllErrors().ToList();
-            if (checkIfGameNameExists(CurrGame.Game_Name))
-                errors.Add("Game Name already exists, try another");
-
-            
-            if (errors.Any())
-            {
-                string message = string.Join("\n", errors);
-                System.Windows.MessageBox.Show(message, "Validation Errors");
-                return;
-            }
-
-            // Save game
-            _gameService.CreateGame(CurrGame);
-            //add each player and piece to DB
-            foreach (var player in GamePlayers)
-            {
-                player.Game_Name = CurrGame.Game_Name;
-                _playerService.CreatePlayer(player);
-
-                foreach (var piece in player.PlayerPieces) { 
-                _gamePieceService.CreateGamePiece(piece);
-                }
-            
             }
             System.Windows.MessageBox.Show("Game succesfully created.");
 
@@ -142,19 +119,6 @@ namespace LudoClient.ViewModels.PreGameViewModels
                 }
             }
 
-        }
-        //helper method
-        private bool checkIfGameNameExists(string name)
-        {
-            games = _gameService.getAll();
-            foreach (var game in games)
-            {
-                if (game.Game_Name.Equals(name))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
     }

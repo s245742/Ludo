@@ -31,7 +31,6 @@ namespace LudoServer.Server
             _listener.Start();
             _running = true;
             Console.WriteLine("Server started...");
-
             while (_running)
             {
                 var client = await _listener.AcceptTcpClientAsync();
@@ -43,30 +42,43 @@ namespace LudoServer.Server
         private async Task HandleClientAsync(TcpClient client)
         {
             var stream = client.GetStream();
-            var buffer = new byte[4096];
 
             while (client.Connected)
             {
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break;
+                // Read 4-byte length prefix
+                var lengthBuffer = new byte[4];
+                int read = await stream.ReadAsync(lengthBuffer, 0, 4);
+                if (read == 0) break; // client disconnected
+                if (read < 4) throw new Exception("Invalid message length received");
 
-                var json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                var envelope = System.Text.Json.JsonSerializer.Deserialize<MessageEnvelope>(json);
-               
-                if (envelope != null)
+                int messageLength = BitConverter.ToInt32(lengthBuffer, 0);
+                var messageBuffer = new byte[messageLength];
+                int totalRead = 0;
+
+                while (totalRead < messageLength)
                 {
-                    //get the hanlder matching the msgtype
-                    
-                    var handler = _handlerStore.GetHandler(envelope.MessageType);
-                    if (handler != null)
-                        //we can now handle the data
-                        
-                    await handler.HandleAsync(envelope.Payload);
+                    int chunk = await stream.ReadAsync(messageBuffer, totalRead, messageLength - totalRead);
+                    if (chunk == 0) throw new Exception("Client disconnected during message read");
+                    totalRead += chunk;
                 }
 
-                var response = Encoding.UTF8.GetBytes("Server processed your message!\n");
-                
-                await stream.WriteAsync(response, 0, response.Length);
+                string json = Encoding.UTF8.GetString(messageBuffer);
+                var envelope = System.Text.Json.JsonSerializer.Deserialize<MessageEnvelope>(json);
+
+                string handlerResult = "No handler found";
+
+                if (envelope != null)
+                {
+                    var handler = _handlerStore.GetHandler(envelope.MessageType);
+                    if (handler != null)
+                        handlerResult = await handler.HandleAsync(envelope.Payload);
+                }
+
+                // Send response back with length prefix
+                var responseBytes = Encoding.UTF8.GetBytes(handlerResult);
+                var lengthPrefix = BitConverter.GetBytes(responseBytes.Length);
+                await stream.WriteAsync(lengthPrefix, 0, 4);
+                await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
             }
 
             client.Close();

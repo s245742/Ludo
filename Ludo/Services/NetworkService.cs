@@ -9,7 +9,7 @@ namespace LudoClient.Services
     {
         private TcpClient _client;
         private NetworkStream _stream;
-
+        public bool IsConnected => _client?.Connected ?? false;
         public async Task ConnectAsync(string host, int port)
         {
             _client = new TcpClient();
@@ -48,5 +48,59 @@ namespace LudoClient.Services
 
             return Encoding.UTF8.GetString(responseBuffer);
         }
+
+        // Continuous listening for messages from server
+        public async Task StartListeningAsync(Action<string> onMessageReceived)
+        {
+            if (_stream == null) return;
+
+            await Task.Yield(); // ensures loop starts asynchronously
+            try
+            {
+                while (_client.Connected)
+                {
+                    var lenBuffer = new byte[4];
+                    int read = await _stream.ReadAsync(lenBuffer, 0, 4).ConfigureAwait(false);
+                    if (read == 0) break; // client disconnected
+                    if (read < 4) throw new Exception("Invalid message length");
+
+                    int msgLength = BitConverter.ToInt32(lenBuffer, 0);
+                    var msgBuffer = new byte[msgLength];
+                    int totalRead = 0;
+
+                    while (totalRead < msgLength)
+                    {
+                        int chunk = await _stream.ReadAsync(msgBuffer, totalRead, msgLength - totalRead).ConfigureAwait(false);
+                        if (chunk == 0) break;
+                        totalRead += chunk;
+                    }
+
+                    string message = Encoding.UTF8.GetString(msgBuffer);
+                    onMessageReceived?.Invoke(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Listening error: " + ex.Message);
+            }
+        }
+
+        private void OnMessageReceived(string msg)
+        {
+            Console.WriteLine("Received: " + msg);
+        }
+        // Fire-and-forget send (no blocking read)
+        public async Task SendAsync(string message)
+        {
+            if (_stream == null) return;
+
+            var data = Encoding.UTF8.GetBytes(message);
+            var lengthBytes = BitConverter.GetBytes(data.Length);
+
+            await _stream.WriteAsync(lengthBytes, 0, lengthBytes.Length).ConfigureAwait(false);
+            await _stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+        }
+
+
     }
 }

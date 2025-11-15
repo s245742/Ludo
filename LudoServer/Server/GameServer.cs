@@ -15,14 +15,16 @@ namespace LudoServer.Server
         private TcpListener _listener;
         private bool _running = false;
         private readonly HandlerStore _handlerStore;
+        private readonly TcpHandlerStore _tcpHandlerStore;
 
 
 
-        public GameServer(int port, HandlerStore handlerStore)
+        public GameServer(int port, HandlerStore handlerStore, TcpHandlerStore tcpHandlerStore)
         {
 
             _listener = new TcpListener(IPAddress.Any, port);
             _handlerStore = handlerStore;
+            _tcpHandlerStore = tcpHandlerStore;
         }
 
 
@@ -69,9 +71,18 @@ namespace LudoServer.Server
 
                 if (envelope != null)
                 {
+                    //try regular handlers
                     var handler = _handlerStore.GetHandler(envelope.MessageType);
                     if (handler != null)
                         handlerResult = await handler.HandleAsync(envelope.Payload);
+                    else
+                    {
+                        //try TCP-specific handlers
+                        var tcpHandler = _tcpHandlerStore.GetHandler(envelope.MessageType);
+                        if (tcpHandler != null)
+                            handlerResult = await tcpHandler.HandleAsync(envelope.Payload, client);
+
+                    }
                 }
 
                 // Send response back with length prefix

@@ -26,9 +26,7 @@ namespace Ludo
             services.AddSingleton<CurrPlayersStore>();
 
             //DI register services
-            services.AddSingleton<GameService>();
-            services.AddSingleton<PlayerService>();
-            services.AddSingleton<GamePieceService>();
+            services.AddSingleton<NetworkService>();
 
             //DI register viewmodels when navigation switches viewmodels (transient so it makes new instance each time called)
             services.AddTransient<StartScreenViewModel>();

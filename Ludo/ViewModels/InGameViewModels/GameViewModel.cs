@@ -1,19 +1,24 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using Ludo;
+﻿using Ludo;
+using LudoClient.Commands;
+using LudoClient.Models;
 using LudoClient.Services;
 using LudoClient.Stores;
-using LudoClient.Models;
 using LudoClient.ViewModels.Base;
 using LudoClient.ViewModels.PreGameViewModels;
-using LudoClient.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using SharedModels.Models;
+using SharedModels.TransferMsg;
+using System.Collections.ObjectModel;
+using System.Net;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LudoClient.ViewModels.InGameViewModels
 {
     public class GameViewModel : ViewModelBase
     {
+        private readonly NetworkService _networkService;
         public ObservableCollection<BoardCellViewModel> BoardCells { get; } = new(); // skal ændres til en liste fra modelen senere
 
         public int[] Path => GameBoardDefinition.Path;
@@ -23,23 +28,40 @@ namespace LudoClient.ViewModels.InGameViewModels
 
         public ICommand NavigateStartScreenCommand { get; }
         public RelayCommand SaveGameCommand { get; }
-        private readonly GamePieceService _gamePieceService;
 
-        public GameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, GamePieceService gamePieceService)
+        public ICommand PingCommand { get; }
+
+        private string _pingText;
+        public string PingText
         {
-            _gamePieceService = gamePieceService;
+            get => _pingText;
+            set { _pingText = value; OnPropertyChanged(nameof(PingText)); }
+        }
+
+        public GameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, NetworkService networkService)
+        {
+            _networkService = networkService;
             NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
             gamePlayers = currPlayersStore.GamePlayers;
-            SaveGameCommand = new RelayCommand(Save);
+            PingCommand = new RelayCommand(SendPing);
 
             GenerateBoard();
             AddDemoPieces();
-            
+          
         }
+        public async Task InitializeAsync()
+        {
+            if (!_networkService.IsConnected)
+                await _networkService.ConnectAsync("127.0.0.1", 5000);
+
+            // Start listening on a background thread
+            _ = Task.Run(() => _networkService.StartListeningAsync(OnMessage));
+        }
+
 
         private void GenerateBoard()
         {
-            for (int i = 0; i<225; i++)
+            for (int i = 0; i < 225; i++)
             {
                 var cell = new BoardCellViewModel();
                 {
@@ -96,9 +118,50 @@ namespace LudoClient.ViewModels.InGameViewModels
                     BoardCells.Add(cell);
                 }
                 ;
-                
+
             }
         }
+        private string _pingLabelText;
+        public string PingLabelText
+        {
+            get => _pingLabelText;
+            set
+            {
+                _pingLabelText = value;
+                OnPropertyChanged(nameof(PingLabelText));
+            }
+        }
+        private void OnMessage(string msg)
+        {
+            try
+            {
+                var envelope = JsonSerializer.Deserialize<MessageEnvelope>(msg);
+                if (envelope?.MessageType == "PingResponse")
+                {
+                    string text = JsonSerializer.Deserialize<string>(envelope.Payload);
+                    Application.Current.Dispatcher.Invoke(() => PingText = text);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error parsing message: " + ex.Message);
+            }
+        }
+
+        private async void SendPing()
+        {
+            if (!_networkService.IsConnected) return;
+
+            var envelope = new MessageEnvelope
+            {
+                MessageType = "Ping",
+                Payload = JsonSerializer.Serialize("Hello from client!")
+            };
+
+            string json = JsonSerializer.Serialize(envelope);
+            await _networkService.SendAsync(json);
+        }
+
 
         private void AddDemoPieces()
         {
@@ -151,25 +214,6 @@ namespace LudoClient.ViewModels.InGameViewModels
             int newIndex = (currentIndex + steps) % BoardCells.Count;
             MoveToPiece(piece, newIndex);
         }
-
-       private void Save()
-        {
-            foreach (Player player in gamePlayers)
-            {
-                foreach (Piece gamepiece in player.PlayerPieces)
-                {
-                    //we get current pieceID in db, from slotindex and playerid (these shouldnt change)
-                    int pieceId = _gamePieceService.GetPieceIDFromPiece(gamepiece);
-                    //update this piece with new spaceindex
-                    _gamePieceService.UpdatePieceFromPieceID(gamepiece, pieceId);
-                }
-
-            }
-            //after update we can now return to startscreen
-            NavigateStartScreenCommand.Execute(null);
-        }
-
-
 
     }
 }

@@ -26,8 +26,8 @@ namespace LudoClient.ViewModels.PreGameViewModels
 
         public ICommand NavigateStartScreenCommand { get; }
         public RelayCommand SaveCommand { get; }
-
-        public CreateGameViewModel(NavigationStore navigationStore)
+        private readonly NetworkService _networkService;
+        public CreateGameViewModel(NavigationStore navigationStore, NetworkService networkService)
         {
            
             //navigation
@@ -35,7 +35,7 @@ namespace LudoClient.ViewModels.PreGameViewModels
                 () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>()); //navigate to startscreen (DI makes complex to get viewmodel)
 
             InitalizeNewGame();
-
+            _networkService = networkService;
             SaveCommand = new RelayCommand(Save);
 
         }
@@ -68,8 +68,8 @@ namespace LudoClient.ViewModels.PreGameViewModels
             //Send
             try
             {
-                var network = new NetworkService();
-                await network.ConnectAsync("127.0.0.1", 5000);
+                
+                await _networkService.ConnectAsync("127.0.0.1", 5000);
 
                 var envelope = new MessageEnvelope
                 {
@@ -78,7 +78,7 @@ namespace LudoClient.ViewModels.PreGameViewModels
                 };
                 var json = System.Text.Json.JsonSerializer.Serialize(envelope);
                 //Send JSON to server
-                var res = await network.SendMessageAsync(json);
+                var res = await _networkService.SendMessageAsync(json);
 
                 //error
                 if (res.Equals("error, GameName already exists"))

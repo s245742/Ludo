@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Ludo.Models
 {
 
     // this class defines the game board layout and starting positions for a Ludo game in the uniform grid system
-    public static class GameBoardDefinition
+    public static class GameViewBoardDefinition
     {
 
         // The main path that pieces follow on the board
@@ -29,7 +30,6 @@ namespace Ludo.Models
             81, 66, 51, 36, 21,
         };
 
-
         // Starting positions for each player's pieces
         public static readonly int[] GreenStart = { 27, 28, 43, 42 };
         public static readonly int[] BlueStart = { 193, 208, 207, 192 };
@@ -42,11 +42,58 @@ namespace Ludo.Models
         public static readonly int[] RedHome = new[] { 106, 107, 108, 109, 110 };
         public static readonly int[] BlueHome = new[] { 114, 115, 116, 117, 118 }.Reverse().ToArray();
 
+        // Goal positions for each color
+        public static int GreenGoal = 97;
+        public static int YellowGoal = 127;
+        public static int RedGoal = 111;
+        public static int BlueGoal = 113;
+
+
+        // Home entry positions for each color on the main path
+        public static int GreenHomeEntry = 23;
+        public static int YellowHomeEntry = 101;
+        public static int RedHomeEntry = 91;
+        public static int BlueHomeEntry = 148;
+
         //Offsets in the Path array for each color's start and home entry positions
         private static int BlueHomeEntryOffset = 18;
         private static int YellowHomeEntryOffset = 33;
         private static int RedHomeEntryOffset = 48;
         private static int GreenHomeEntryOffset = 3;
+
+    }
+
+    public static class GameBoardDefinitions
+    {
+
+        // Stars in the Path array
+        public static int[] Stars = { 5, 11, 18, 24, 31, 37, 44, 50 };
+
+        public static int[] Globes = { 0, 8, 13, 21, 26, 34, 39, 47 };
+
+
+        // Offsets in the Path array for each color's start and home entry positions
+        public static int GreenHomeEntry = 0;
+        public static int BlueHomeEntry = 13;
+        public static int YellowHomeEntry = 26;
+        public static int RedHomeEntry = 39;
+
+
+        public static int GreenGoalEntry = 57;
+        public static int BlueGoalEntry = 11;
+        public static int YellowGoalEntry = 24;
+        public static int RedGoalEntry = 37;
+
+
+        public static readonly Dictionary<PieceColor, int> PathOffsets = new()
+    {
+        { PieceColor.Green, 3 },
+        { PieceColor.Blue, 16 },
+        { PieceColor.Yellow, 29 },
+        { PieceColor.Red, 42 }
+    };
+
+
     }
 
 }

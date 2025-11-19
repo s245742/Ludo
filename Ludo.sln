@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludo", "Ludo\Ludo.csproj", "{69273F94-3A6B-483C-A90F-083D811F330D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludo.tests", "Ludo.tests\Ludo.tests.csproj", "{40348E3A-6EE3-4016-82F8-7F16076D08ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{69273F94-3A6B-483C-A90F-083D811F330D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69273F94-3A6B-483C-A90F-083D811F330D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69273F94-3A6B-483C-A90F-083D811F330D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40348E3A-6EE3-4016-82F8-7F16076D08ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40348E3A-6EE3-4016-82F8-7F16076D08ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40348E3A-6EE3-4016-82F8-7F16076D08ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40348E3A-6EE3-4016-82F8-7F16076D08ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,26 +6,25 @@ using System.Threading.Tasks;
 
 namespace Ludo.Models
 {
-    public enum SpaceType
+    public enum PathType
     {
-        Empty, 
-        Normal, 
-        Star, 
-        Globe, 
-        Start, 
-        Home, 
-        Goal
+        Normal,
+        PathEntry,
+        Star,
+        Globe,
+        GoalEntry
     }
     public enum PieceColor : int { Red = 0, Green = 1, Blue = 2, Yellow = 3 }
 
     public enum CellType
     {
         Empty,
-        Red,
-        Green,
-        Blue,
-        Yellow,
-        Fields
+        Path,
+        GoalPath,
+        Home,
+        Goal
     }
 
 }
+
+

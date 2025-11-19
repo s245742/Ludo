@@ -79,15 +79,11 @@ namespace Ludo.ViewModels.PreGameViewModels
 
 
         }
-        
-
 
         private void InitalizeNewGame()
         {
-            //new game
             CurrGame = new Game();
 
-            //new player
             GamePlayers.Clear();
             GamePlayers.Add(new Player(PieceColor.Red));
             GamePlayers.Add(new Player(PieceColor.Green));
@@ -96,13 +92,35 @@ namespace Ludo.ViewModels.PreGameViewModels
 
             foreach (Player player in GamePlayers)
             {
-                for (int i = 1; i < 5; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    player.PlayerPieces.Add(new Piece(player.Color, i,0));
+                    // SpaceIndex = -1 betyder "i hjemmet"
+                    player.PlayerPieces.Add(new Piece(player.Color, i, 0));
                 }
             }
-
         }
+
+        //private void InitalizeNewGame()
+        //{
+        //    //new game
+        //    CurrGame = new Game();
+
+        //    //new player
+        //    GamePlayers.Clear();
+        //    GamePlayers.Add(new Player(PieceColor.Red));
+        //    GamePlayers.Add(new Player(PieceColor.Green));
+        //    GamePlayers.Add(new Player(PieceColor.Blue));
+        //    GamePlayers.Add(new Player(PieceColor.Yellow));
+
+        //    foreach (Player player in GamePlayers)
+        //    {
+        //        for (int i = 1; i < 5; i++)
+        //        {
+        //            player.PlayerPieces.Add(new Piece(player.Color, i,-1));
+        //        }
+        //    }
+
+        //}
         //helper method
         private bool checkIfGameNameExists(string name)
         {

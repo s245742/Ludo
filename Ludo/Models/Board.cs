@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Ludo.Models.Cells;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,49 +11,47 @@ namespace Ludo.Models
 {
     public class Board
     {
-        public Space[] Spaces { get; }
+        public PathCell[] Path { get; }
+        public Dictionary<PieceColor, GoalPathCell[]> GoalPaths { get; }
+        public Dictionary<PieceColor, GoalCell> GoalCells { get; }
+        public Dictionary<PieceColor, HomeCell[]> HomeCells { get; }
+        public Player[] Player { get; }
 
-        int Dice { get; set; }
-        public Board()
+        public int Dice { get; set; }
+
+        public Board(
+            PathCell[] path,
+            Dictionary<PieceColor, GoalPathCell[]> goalPaths,
+            Dictionary<PieceColor, GoalCell> goalCellls,
+            Dictionary<PieceColor, HomeCell[]> homeCells,
+            Player[] player)
         {
-            Spaces = new Space[225];
+            Path = path;
+            GoalPaths = goalPaths;
+            GoalCells = goalCellls;
+            HomeCells = homeCells;
+            Player = player;
+        }
 
+        public bool IsPositionOccupied(int index, IEnumerable<Piece> allPieces)
+        {
+            return allPieces.Any(p => p.SpaceIndex == index);
+        }
 
-
-            for (int i = 0; i < 255; i++)
-            {
-               
-
-            }
-     
-
+        public bool isSafeZone(int index)
+        {
+            return Path[index].IsSafeZone();
         }
 
 
-        public Space GetSpace(int index)
-        {
-            return Spaces[index];
-        }
+        // methods to move pieces around the board
 
-        public void MovePiece(Piece piece, int newSpaceIndex)
-        {
-            var currentSpace = GetSpace(piece.SpaceIndex);
-            var newSpace = GetSpace(newSpaceIndex);
-            // Remove piece from current space
-            currentSpace.Pieces.Remove(piece);
-            // Update piece's space index
-            piece.SpaceIndex = newSpaceIndex;
-            // Add piece to new space
-            newSpace.Pieces.Add(piece);
-        }
 
-        public void MoveSteps(Piece piece, int steps)
-        {
-            int currentSpaceIndex = piece.SpaceIndex;
-        
-            
-        }
+
+
 
 
     }
 }
+
+

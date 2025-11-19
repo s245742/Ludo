@@ -1,65 +1,80 @@
 ﻿<UserControl x:Class="Ludo.Views.GameView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Ludo.Views"
-        xmlns:vm="clr-namespace:Ludo.ViewModels.InGameViewModels"
-        mc:Ignorable="d"
-        Height="800" Width="800">
-
-  
-
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Height="800" Width="800">
     <Grid>
+        <!-- BOARD -->
         <ItemsControl ItemsSource="{Binding BoardCells}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="15" Columns="15"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <!-- Celles baggrund -->
-                        <Border Background="{Binding CellColor}"
-                                BorderBrush="Black"
-                                BorderThickness="0.5" />
-
-
-                        <!-- Brikker i denne celle -->
+                    <Border Background="{Binding CellColor}" BorderBrush="Black" BorderThickness="0.1">
                         <ItemsControl ItemsSource="{Binding Pieces}">
-                            
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid/>
+                                    <!-- overlap/centrering -->
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Canvas >
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <!-- Gør brikken klikbar via Button der sender PieceViewModel som parameter -->
+                                        <Button
+    Command="{Binding DataContext.SelectPieceCommand,
+                      RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+    CommandParameter="{Binding .}"
+    Background="Transparent"
+    BorderBrush="{x:Null}"
+    Padding="0" Focusable="False">
+                                            <Ellipse x:Name="Dot"
+             Width="{Binding VisualSize, FallbackValue=20}"
+             Height="{Binding VisualSize, FallbackValue=20}"
+             Fill="{Binding Fill}"
+             Stroke="Black"
+             StrokeThickness="1"/>
+                                        </Button>
+                                    </Grid>
 
-                                        <Ellipse
-
-                                            Width="{Binding Size}" Height="{Binding Size}"        
-                                                 Fill="{Binding Fill}"
-                                                 Stroke="{Binding Stroke}"
-                                                 StrokeThickness="{Binding StrokeThickness}"
-                                                 Margin="1"
-                                            Canvas.Left="{Binding PositionX}"
-                                            Canvas.Top="{Binding PositionY}">
-
-
-                                        </Ellipse>
-                                        
-                                    </Canvas>
+                                    <!-- Visuel markering når IsSelected = true -->
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter TargetName="Dot" Property="StrokeThickness" Value="3"/>
+                                            <Setter TargetName="Dot" Property="Stroke" Value="Black"/>
+                                            <Setter TargetName="Dot" Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="Black" ShadowDepth="0" BlurRadius="10" Opacity="0.6"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-
                         </ItemsControl>
-
-                        
-                    </Grid>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button x:Name="SaveGameBtn" Content="Save Game" HorizontalAlignment="Left" Height="48" Margin="2,2,0,0" VerticalAlignment="Top" Width="80" Command="{Binding SaveGameCommand}"/>
-        
-    </Grid>
 
+        <!-- Gem-knap som før -->
+        <Button x:Name="SaveGameBtn" Content="Save Game"
+                HorizontalAlignment="Left" Height="32" Margin="2,2,0,0"
+                VerticalAlignment="Top" Width="90"
+                Command="{Binding SaveGameCommand}"/>
+
+        <!-- NYT: Steps + Move (øverst til venstre, ved siden af Save) -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="100,2,0,0">
+            <TextBlock Text="Steps:" Margin="0,6,6,0"/>
+            <TextBox Width="60" Text="{Binding MoveSteps, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Move" Margin="8,0,0,0"
+                    Command="{Binding MoveSelectedPieceCommand}"/>
+        </StackPanel>
+    </Grid>
 </UserControl>

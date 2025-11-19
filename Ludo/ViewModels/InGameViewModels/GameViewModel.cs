@@ -1,18 +1,29 @@
-﻿using Ludo.Commands;
+﻿using Ludo;
 using Ludo.Models;
-using Ludo.Models.Cells;
-using Ludo.Services;
-using Ludo.Stores;
-using Ludo.ViewModels.Base;
-using Ludo.ViewModels.PreGameViewModels;
+using Ludo.ViewModels.InGameViewModels;
+using LudoClient.Commands;
+using LudoClient.Models;
+using LudoClient.Services;
+using LudoClient.Stores;
+using LudoClient.ViewModels.Base;
+using LudoClient.ViewModels.PreGameViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using SharedModels.Models;
+using SharedModels.Models.Cells;
+using SharedModels.TransferMsg;
 using System.Collections.ObjectModel;
+using System.Net;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 
-namespace Ludo.ViewModels.InGameViewModels
+namespace LudoClient.ViewModels.InGameViewModels
 {
     public class GameViewModel : ViewModelBase
     {
+        private readonly NetworkService _networkService;
+        //public ObservableCollection<BoardCellViewModel> BoardCells { get; } = new(); // skal ændres til en liste fra modelen senere
         private readonly Game _game;
         public ObservableCollection<CellViewModel> BoardCells { get; } = new(); // skal ændres til en liste fra modelen senere
         //public ObservableCollection<PieceViewModel> Pieces { get; } = new();
@@ -25,7 +36,15 @@ namespace Ludo.ViewModels.InGameViewModels
 
         public ICommand NavigateStartScreenCommand { get; }
         public RelayCommand SaveGameCommand { get; }
-        private readonly GamePieceService _gamePieceService;
+
+        public ICommand PingCommand { get; }
+
+        private string _pingText;
+        public string PingText
+        {
+            get => _pingText;
+            set { _pingText = value; OnPropertyChanged(nameof(PingText)); }
+        }
 
 
         private PieceViewModel? _selectedPieceVM;
@@ -48,13 +67,12 @@ namespace Ludo.ViewModels.InGameViewModels
 
 
 
-
-        public GameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, GamePieceService gamePieceService)
+        public GameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, NetworkService networkService)
         {
-            _gamePieceService = gamePieceService;
+            _networkService = networkService;
             NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
             gamePlayers = currPlayersStore.GamePlayers;
-            SaveGameCommand = new RelayCommand(Save);
+            PingCommand = new RelayCommand(SendPing);
 
 
             //tilføjet for at initialisere spillet med bræt og spillere
@@ -72,6 +90,15 @@ namespace Ludo.ViewModels.InGameViewModels
             PlaceAllPieces();
 
 
+          
+        }
+        public async Task InitializeAsync()
+        {
+            if (!_networkService.IsConnected)
+                await _networkService.ConnectAsync("127.0.0.1", 5000);
+
+            // Start listening on a background thread
+            _ = Task.Run(() => _networkService.StartListeningAsync(OnMessage));
         }
 
 
@@ -131,6 +158,7 @@ namespace Ludo.ViewModels.InGameViewModels
             _game.MovePiece(pieceVM.ModelPiece, steps);
             PlaceAllPieces();
         }
+
         private void PlaceAllPieces()
         {
             // 1) Tøm alle cellers visuelle brikker
@@ -245,22 +273,60 @@ namespace Ludo.ViewModels.InGameViewModels
 
 
 
-
-       private void Save()
+        private string _pingLabelText;
+        public string PingLabelText
         {
-            foreach (Player player in _game.Players)
+            get => _pingLabelText;
+            set
             {
-                foreach (Piece gamepiece in player.PlayerPieces)
-                {
-                    //we get current pieceID in db, from slotindex and playerid (these shouldnt change)
-                    int pieceId = _gamePieceService.GetPieceIDFromPiece(gamepiece);
-                    //update this piece with new spaceindex
-                    _gamePieceService.UpdatePieceFromPieceID(gamepiece, pieceId);
-                }
-
+                _pingLabelText = value;
+                OnPropertyChanged(nameof(PingLabelText));
             }
-            //after update we can now return to startscreen
-            NavigateStartScreenCommand.Execute(null);
+        }
+        private void OnMessage(string msg)
+        {
+            try
+            {
+                var envelope = JsonSerializer.Deserialize<MessageEnvelope>(msg);
+                if (envelope?.MessageType == "PingResponse")
+                {
+                    string text = JsonSerializer.Deserialize<string>(envelope.Payload);
+                    Application.Current.Dispatcher.Invoke(() => PingText = text);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error parsing message: " + ex.Message);
+            }
+        }
+
+        private async void SendPing()
+        {
+            if (!_networkService.IsConnected) return;
+
+            var envelope = new MessageEnvelope
+            {
+                MessageType = "Ping",
+                Payload = JsonSerializer.Serialize("Hello from client!")
+            };
+
+            string json = JsonSerializer.Serialize(envelope);
+            await _networkService.SendAsync(json);
+        }
+
+
+   
+
+
+        // test methods to move pieces around the board
+        private void MoveToPiece(PieceViewModel piece, int newSpaceIndex)
+        {
+            if (piece.SpaceIndex >= 0 && piece.SpaceIndex < BoardCells.Count)
+            {
+                BoardCells[piece.SpaceIndex].Pieces.Remove(piece);
+            }
+            piece.SpaceIndex = newSpaceIndex;
+            BoardCells[newSpaceIndex].Pieces.Add(piece);
         }
 
         // GameViewModel.cs

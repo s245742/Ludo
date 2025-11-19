@@ -1,8 +1,12 @@
-﻿using Ludo.Models;
+﻿using LudoClient.Models;
+using SharedModels.Models;
+using System;
+using System.Collections.Generic;
+using Ludo.Models;
 using System.ComponentModel;
 using System.Windows.Media;
 
-namespace Ludo.ViewModels.InGameViewModels
+namespace LudoClient.ViewModels.InGameViewModels
 {
     public class PieceViewModel : INotifyPropertyChanged
     {

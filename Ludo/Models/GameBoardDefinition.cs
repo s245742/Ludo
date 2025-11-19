@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharedModels.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Models
+namespace LudoClient.Models
 {
 
     // this class defines the game board layout and starting positions for a Ludo game in the uniform grid system

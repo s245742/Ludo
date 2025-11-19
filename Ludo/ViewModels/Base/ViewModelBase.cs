@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.ViewModels.Base
+namespace LudoClient.ViewModels.Base
 {
 
     //Inotify implementation (other models should inherit)

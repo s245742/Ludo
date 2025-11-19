@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ludo.Models.Cells;
+using LudoClient.Models;
+using SharedModels.Models;
+using SharedModels.Models.Cells;
 
 namespace Ludo.Models
 {

@@ -5,6 +5,8 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using Ludo.Models;
+    using LudoClient.Models;
+    using SharedModels.Models;
 
     public class StandardLudoMoveEngine : IMoveEngine
     {

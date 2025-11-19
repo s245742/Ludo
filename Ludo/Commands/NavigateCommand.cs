@@ -1,12 +1,12 @@
-﻿using Ludo.Stores;
-using Ludo.ViewModels.Base;
+﻿using LudoClient.Stores;
+using LudoClient.ViewModels.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Commands
+namespace LudoClient.Commands
 {
     public class NavigateCommand<TViewModel> : CommandBase
         where TViewModel : ViewModelBase //Constraint needed

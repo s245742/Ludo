@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Ludo"
-        xmlns:preGameViewModels="clr-namespace:Ludo.ViewModels.PreGameViewModels"
-        xmlns:inGameViewModels="clr-namespace:Ludo.ViewModels.InGameViewModels"
+        xmlns:preGameViewModels="clr-namespace:LudoClient.ViewModels.PreGameViewModels"
+        xmlns:inGameViewModels="clr-namespace:LudoClient.ViewModels.InGameViewModels"
         xmlns:views="clr-namespace:Ludo.Views"
         
         mc:Ignorable="d"

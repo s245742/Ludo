@@ -1,11 +1,11 @@
-﻿using Ludo.Models.Cells;
+﻿using SharedModels.Models.Cells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Models
+namespace SharedModels.Models
 {
     public class Piece
     {

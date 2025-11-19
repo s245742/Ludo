@@ -1,10 +1,11 @@
-﻿using Ludo.Models;
-using Ludo.ViewModels.Base;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Ludo.Services;
+using LudoClient.Services;
+using LudoClient.Models;
+using LudoClient.ViewModels.Base;
+using SharedModels.Models;
 
 public abstract class GameValidationViewModel : ViewModelBase, IDataErrorInfo
 {

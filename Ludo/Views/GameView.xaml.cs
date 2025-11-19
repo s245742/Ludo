@@ -1,6 +1,5 @@
 ﻿
-using Ludo.Models;
-using Ludo.ViewModels.InGameViewModels;
+using LudoClient.ViewModels.InGameViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +16,13 @@ namespace Ludo.Views
 
 
 
+        }
+        private async void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (DataContext is GameViewModel vm)
+            {
+                await vm.InitializeAsync();
+            }
         }
     }
 }

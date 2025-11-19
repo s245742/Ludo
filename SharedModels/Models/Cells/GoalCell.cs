@@ -4,36 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ludo.Models.Cells
+namespace SharedModels.Models.Cells
 {
-    public class HomeCell : Cell
+    public class GoalCell : Cell
     {
         public PieceColor Color { get; }
-        public int SlotIndex { get; }
-        public HomeCell(int cellIndex, PieceColor color, int slotIndex)
-            : base(cellIndex, CellType.Home)
+        public GoalCell(int cellIndex, PieceColor color)
+            : base(cellIndex, CellType.Goal)
         {
             Color = color;
-            SlotIndex = slotIndex;
         }
 
         public bool addPiece(Piece piece)
         {
-            if(piece == null)
+            if (piece == null)
             {
                 throw new ArgumentNullException(nameof(piece));
             }
-            if(piece.Color != this.Color)
+            if (piece.Color != this.Color)
             {
-                throw new InvalidOperationException("Piece color does not match HomeCell color.");
+                throw new InvalidOperationException("Piece color does not match GoalCell color.");
             }
-            if(this.Pieces.Count >= 1)
+            if (this.Size >= 4)
             {
-                throw new InvalidOperationException("HomeCell already has a piece.");
+                throw new InvalidOperationException("GoalCell already has maximum number of pieces.");
             }
             this.Pieces.Add(piece);
+            
             return true;
         }
+
         public bool removePiece(Piece piece)
         {
             if (piece == null)
@@ -42,7 +42,7 @@ namespace Ludo.Models.Cells
             }
             if (!this.Pieces.Contains(piece))
             {
-                throw new InvalidOperationException("Piece not found in HomeCell.");
+                throw new InvalidOperationException("Piece not found in GoalCell.");
             }
             this.Pieces.Remove(piece);
             return true;

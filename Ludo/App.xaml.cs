@@ -1,8 +1,8 @@
-﻿using Ludo.Services;
-using Ludo.Stores;
-using Ludo.ViewModels.InGameViewModels;
-using Ludo.ViewModels.PreGameViewModels;
-using Ludo.Views;
+﻿using Ludo.Views;
+using LudoClient.Services;
+using LudoClient.Stores;
+using LudoClient.ViewModels.InGameViewModels;
+using LudoClient.ViewModels.PreGameViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -26,9 +26,7 @@ namespace Ludo
             services.AddSingleton<CurrPlayersStore>();
 
             //DI register services
-            services.AddSingleton<GameService>();
-            services.AddSingleton<PlayerService>();
-            services.AddSingleton<GamePieceService>();
+            services.AddSingleton<NetworkService>();
 
             //DI register viewmodels when navigation switches viewmodels (transient so it makes new instance each time called)
             services.AddTransient<StartScreenViewModel>();

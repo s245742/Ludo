@@ -41,11 +41,11 @@ namespace SharedModels.Models
         // Flyttelogik
         public Piece MovePiece(Piece piece, int steps)
         {
-            if (Board == null || Players == null) return null;
+
             // TODO: muligvis ænding til LINQ:
             // Find alle spillere der er samme sted og sæt i en liste--> tæl listen --> hvis flere send sig selv hjem ellers send listen(0) hjem
             // flyt spiller hen på rigtige plads
-            if (Board == null || Players == null) return;
+            if (Board == null || Players == null) return null;
             rules.MovePieceSteps(piece, steps);
 
             //var a = Board.Path[0].OwnedBy = PieceColor.None;

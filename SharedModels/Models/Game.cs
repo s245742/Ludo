@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedModels.Models.Cells;
 using SharedModels.Models;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SharedModels.Models
 {
@@ -40,19 +41,77 @@ namespace SharedModels.Models
         // Flyttelogik
         public void MovePiece(Piece piece, int steps)
         {
+            // TODO: muligvis ænding til LINQ:
+            // Find alle spillere der er samme sted og sæt i en liste--> tæl listen --> hvis flere send sig selv hjem ellers send listen(0) hjem
+            // flyt spiller hen på rigtige plads
             if (Board == null || Players == null) return;
             rules.MovePieceSteps(piece, steps);
 
-            // Håndter slå ud logik
+            //var a = Board.Path[0].OwnedBy = PieceColor.None;
+
+            int countPlayer = 0;
+            // Tæl hvor mange andre spillere der er
             foreach (var player in Players)
             {
                 foreach (var otherPiece in player.PlayerPieces)
                 {
-                    if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece))
+                    if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece && otherPiece.isAtPath())
                     {
-                        rules.MovePieceBackToHome(otherPiece);
+                            countPlayer++;                       
+                    }
+                }
+            }
+            // hvis der er nogen der står på globus:
+
+            // send sig selv hjem hvis der er flere andre brikker på pladsen eller på globus
+            if ((countPlayer > 1 && countPlayer <5))
+            {
+                // hvis flere brikker er på en hjemmeglobus
+                if (Board.Path[piece.GetCommonPathIndex() - 1].OwnedBy == piece.Color)
+                {
+                    foreach (var player in Players)
+                    {
+                        foreach (var otherPiece in player.PlayerPieces)
+                        {
+                            if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece)
+                            {
+                                    rules.MovePieceBackToHome(otherPiece);
+                            }
+                        }
                     }
 
+                }
+                else
+                {
+                    rules.MovePieceBackToHome(piece);
+                }
+            }
+            if (countPlayer == 1)
+            {
+                //find other piece med samme index og send hjem
+                foreach (var player in Players)
+                {
+                    foreach (var otherPiece in player.PlayerPieces)
+                    {
+                        if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece)
+                        {
+                            if (otherPiece.isAtPath() && Board.Path[piece.GetCommonPathIndex() - 1].Type == PathType.Globe)
+                            {
+                                if (Board.Path[piece.GetCommonPathIndex()-1].OwnedBy == piece.Color)
+                                { 
+                                    rules.MovePieceBackToHome(otherPiece); 
+                                }
+                                else
+                                {
+                                    rules.MovePieceBackToHome(piece);
+                                }
+                            }
+                            else
+                            {
+                                rules.MovePieceBackToHome(otherPiece);
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -77,10 +77,10 @@ namespace SharedModels.Models
 
 
         // Offsets in the Path array for each color's start and home entry positions
-        public static int GreenHomeEntry = 0;
-        public static int BlueHomeEntry = 13;
-        public static int YellowHomeEntry = 26;
-        public static int RedHomeEntry = 39;
+        public static int GreenHomeEntry = 3;
+        public static int BlueHomeEntry = 16;
+        public static int YellowHomeEntry = 29;
+        public static int RedHomeEntry = 42;
 
 
         public static int GreenGoalEntry = 57;

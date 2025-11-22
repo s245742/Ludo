@@ -1,4 +1,5 @@
-﻿using SharedModels.Models.Cells;
+﻿using SharedModels.GameLogic;
+using SharedModels.Models.Cells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,11 @@ namespace SharedModels.Models
         public bool IsAtStart { get; set; } = true; //can derive from boardpos
         public bool IsFinished { get; set; } //can derive from boardpos
 
+        public bool isAtPath()
+        {
+            return (SpaceIndex > 0 && SpaceIndex <= PiecePositionCodec.PathEnd+1);
+        }
+
         public Piece(PieceColor color, int slotIndex, int spaceIndex)
         {
             Color = color;
@@ -34,12 +40,17 @@ namespace SharedModels.Models
 
         public int GetCommonPathIndex()
         {
-            return (SpaceIndex - GameBoardDefinitions.PathOffsets[Color]) % 52;
+
+            return (SpaceIndex + GameBoardDefinitions.PathOffsets[Color]) % 52;
         }
 
         public bool isPieceSameIndex(Piece other)
         {
-            return this.GetCommonPathIndex == other.GetCommonPathIndex;
+            if (this.GetCommonPathIndex() == other.GetCommonPathIndex())
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool isPieceSameColor(Piece other)

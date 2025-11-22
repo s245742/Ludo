@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -77,7 +78,7 @@ namespace SharedModels.GameLogic
 
         public bool MovePieceBackToHome(Piece piece)
         {
-            piece.SpaceIndex = PiecePositionCodec.Home;
+            piece.MoveTo(PiecePositionCodec.Home);
             return true;
             // Implementation of sending a piece back to home
         }

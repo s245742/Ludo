@@ -38,9 +38,9 @@ namespace SharedModels.Models
 
 
         // Flyttelogik
-        public void MovePiece(Piece piece, int steps)
+        public Piece MovePiece(Piece piece, int steps)
         {
-            if (Board == null || Players == null) return;
+            if (Board == null || Players == null) return null;
             rules.MovePieceSteps(piece, steps);
 
             // Håndter slå ud logik
@@ -55,6 +55,7 @@ namespace SharedModels.Models
 
                 }
             }
+            return piece;
         }
 
 

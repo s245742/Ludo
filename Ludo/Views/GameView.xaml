@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Ludo.Views"
              xmlns:vm="clr-namespace:LudoClient.ViewModels.InGameViewModels"
              mc:Ignorable="d"
-             Height="800" Width="800"
+             MinWidth="400" MinHeight="400"
              Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
@@ -14,7 +14,7 @@
     </UserControl.Resources>
 
 
-    <Grid Margin="0,111,0,0">
+    <Grid Margin="0,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="613*"/>
             <ColumnDefinition Width="187*"/>
@@ -95,21 +95,15 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Save button -->
-        <Button x:Name="SaveGameBtn"
-                Content="Save Game"
+        <!-- Exit game button -->
+        <Button x:Name="ExitBtn"
+                Content="Exit Game"
                 HorizontalAlignment="Left"
                 Height="48"
                 Margin="2,2,0,0"
                 VerticalAlignment="Top"
                 Width="80"
-                Command="{Binding SaveGameCommand}"/>
-
-        <!-- Ping UI -->
-        <StackPanel Margin="130,-82,130,698" Grid.ColumnSpan="2">
-            <Button Content="Send Ping" Command="{Binding PingCommand}" Width="100" Height="30"/>
-            <Label Content="{Binding PingText}" FontSize="16" Margin="0,10,0,0"/>
-        </StackPanel>
+                Command="{Binding ExitGameCommand}"/>
 
         <!-- Steps input -->
         <StackPanel Orientation="Horizontal"

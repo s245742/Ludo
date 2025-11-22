@@ -1,4 +1,5 @@
 ﻿using LudoServer.Handlers;
+using LudoServer.Handlers.MsgHandlerInterfaces;
 using LudoServer.Server;
 using LudoServer.Services;
 using LudoServer.Session;
@@ -14,6 +15,8 @@ class Program
         services.AddSingleton<PlayerService>();
         services.AddSingleton<GamePieceService>();
 
+
+
         //Handler as singleton
         services.AddSingleton<IMessageHandler, CreateGameHandler>();
         services.AddSingleton<IMessageHandler, GetAllGamesHandler>();
@@ -21,14 +24,14 @@ class Program
         
         services.AddSingleton<GameSessionManager>();
         services.AddSingleton<ITcpMessageHandler, JoinGameHandler>();
-        services.AddSingleton<ITcpMessageHandler, PingHandler>();
+        services.AddSingleton<ITcpMessageHandler, MovePieceHandler>();
 
         //set TCPserver singleton and inject the others
         services.AddSingleton<HandlerStore>(serviceProvider =>
             new HandlerStore(serviceProvider.GetServices<IMessageHandler>()));
        
         services.AddSingleton<TcpHandlerStore>(sp =>
-            new TcpHandlerStore(sp.GetServices<ITcpMessageHandler>()));
+            new TcpHandlerStore(sp.GetServices<ITcpMessageHandler>(), sp.GetRequiredService<GameSessionManager>()));
 
         services.AddSingleton<GameSessionManager>();
 

@@ -66,15 +66,22 @@ namespace LudoClient.ViewModels.PreGameViewModels
             LoadData();
         }
 
-        
+        private async Task EnsureConnectedAsync()
+        {
+            if (!_networkService.IsConnected)
+            {
+                await _networkService.ConnectAsync("127.0.0.1", 5000);
+            }
+        }
+
         //display games
         private async void LoadData()
         {
             //Send
             try
             {
-               
-                await _networkService.ConnectAsync("127.0.0.1", 5000);
+
+                await EnsureConnectedAsync();
 
                 var envelope = new MessageEnvelope
                 {
@@ -110,8 +117,8 @@ namespace LudoClient.ViewModels.PreGameViewModels
                 
                 try
                 {
-                    
-                    await _networkService.ConnectAsync("127.0.0.1", 5000);
+
+                    await EnsureConnectedAsync();
 
                     var envelope = new MessageEnvelope
                     {
@@ -138,8 +145,8 @@ namespace LudoClient.ViewModels.PreGameViewModels
         {
             try
             {
-                
-                await _networkService.ConnectAsync("127.0.0.1", 5000);
+
+                await EnsureConnectedAsync();
 
                 JoinGameDTO joinGameDTO = new JoinGameDTO()
                 {

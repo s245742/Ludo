@@ -1,4 +1,5 @@
-﻿    
+﻿
+using LudoClient.ViewModels.Base;
 using LudoClient.ViewModels.InGameViewModels;
 using SharedModels.Models;
 using SharedModels.Models.Cells;
@@ -9,7 +10,7 @@ using System.Windows.Media;
 
 namespace Ludo.ViewModels.InGameViewModels;
 
-public class CellViewModel : INotifyPropertyChanged
+public class CellViewModel : ViewModelBase
 {
     public int CellIndex { get; }
     public CellType Type { get; }
@@ -80,12 +81,4 @@ public class CellViewModel : INotifyPropertyChanged
         }
     }
 
-
-
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }

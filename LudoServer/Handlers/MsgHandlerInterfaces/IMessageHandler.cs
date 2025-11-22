@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LudoServer.Handlers
+namespace LudoServer.Handlers.MsgHandlerInterfaces
 {
     public interface IMessageHandler
     {

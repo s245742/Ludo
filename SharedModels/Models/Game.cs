@@ -1,10 +1,13 @@
-﻿using System;
+﻿using SharedModels.GameLogic;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharedModels.Models.Cells;
+using SharedModels.Models;
 
 namespace SharedModels.Models
 {
@@ -12,17 +15,16 @@ namespace SharedModels.Models
     {
 
         private string game_name;
-
         public string Game_Name 
         {
             get { return game_name; }
             set { game_name = value;}
         }
 
-
         // Ny tilføjelse: Spiltilstand
         public Board? Board { get; private set; }
         public ObservableCollection<Player>? Players { get; private set; }
+        public StdLudoMoveRules rules = new StdLudoMoveRules();
 
         // Behold den gamle constructor (ingen ændring)
         public Game() { }
@@ -39,20 +41,20 @@ namespace SharedModels.Models
         public void MovePiece(Piece piece, int steps)
         {
             if (Board == null || Players == null) return;
+            rules.MovePieceSteps(piece, steps);
 
-            int newIndex = piece.SpaceIndex + steps;
-            if (newIndex >= Board.Path.Length)
-                newIndex -= Board.Path.Length;
-
-            var occupiedPiece = Players.SelectMany(p => p.PlayerPieces)
-                                       .FirstOrDefault(p => p.SpaceIndex == newIndex);
-
-            if (occupiedPiece != null && !Board.Path[newIndex].IsSafeZone())
+            // Håndter slå ud logik
+            foreach (var player in Players)
             {
-                occupiedPiece.SpaceIndex = -1; // Send hjem
-            }
+                foreach (var otherPiece in player.PlayerPieces)
+                {
+                    if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece))
+                    {
+                        rules.MovePieceBackToHome(otherPiece);
+                    }
 
-            piece.SpaceIndex = newIndex;
+                }
+            }
         }
 
 

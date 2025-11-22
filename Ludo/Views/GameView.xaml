@@ -9,65 +9,87 @@
              Height="800" Width="800"
              Loaded="UserControl_Loaded">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+
     <Grid Margin="0,111,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="613*"/>
             <ColumnDefinition Width="187*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Hele brættet -->
         <ItemsControl ItemsSource="{Binding BoardCells}" Grid.ColumnSpan="2" Margin="0,26,0,0">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="15" Columns="15"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            
 
+            
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Background="{Binding CellColor}" BorderBrush="Black" BorderThickness="0.1">
-                        <ItemsControl ItemsSource="{Binding Pieces}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid>
 
-                                        <!-- Clickable piece -->
-                                        <Button
-                                            Command="{Binding DataContext.SelectPieceCommand,
-                                                              RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                            CommandParameter="{Binding .}"
-                                            Background="Transparent"
-                                            BorderBrush="{x:Null}"
-                                            Padding="0"
-                                            Focusable="False">
+                            <!-- Trigger stjerne hvis IsStar er true-->
+                                <TextBlock
+                                    Margin="0,-7,0,0"
+                                Text="★"
+                                FontSize="50"
+                                Foreground="BlanchedAlmond"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="center"
+                                Visibility="{Binding IsStar, Converter={StaticResource BoolToVisibilityConverter}}"/>
+       
+                            <!-- Trigger globe hvis IsGlobe er true-->
+                            <TextBlock 
+                                Margin="0,-3,0,0"
+                                Text="🌐"
+                                FontSize="40"
+                                Foreground="{Binding GlobeColor}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding IsGlobe, Converter={StaticResource BoolToVisibilityConverter}}"/>      
 
-                                            <Ellipse x:Name="Dot"
-                                                     Width="{Binding VisualSize, FallbackValue=20}"
-                                                     Height="{Binding VisualSize, FallbackValue=20}"
-                                                     Fill="{Binding Fill}"
-                                                     Stroke="Black"
-                                                     StrokeThickness="1"/>
-                                        </Button>
-                                    </Grid>
-                                    <!-- Visual highlight when selected -->
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                <Setter TargetName="Dot" Property="StrokeThickness" Value="3"/>
-                                                <Setter TargetName="Dot" Property="Stroke" Value="Black"/>
-                                                <Setter TargetName="Dot" Property="Effect">
-                                                    <Setter.Value>
-                                                        <DropShadowEffect Color="Black"
-                                                                          ShadowDepth="0"
-                                                                          BlurRadius="10"
-                                                                          Opacity="0.6"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
 
-                                   
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                            <!-- Brikker -->
+                            <ItemsControl ItemsSource="{Binding Pieces}" AlternationCount="64" Panel.ZIndex="1">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Panel.ZIndex"
+                                                Value="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex)}"/>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button
+                                                Command="{Binding DataContext.SelectPieceCommand,
+                                                                  RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                CommandParameter="{Binding .}"
+                                                Background="Transparent"
+                                                BorderBrush="{x:Null}"
+                                                Padding="0"
+                                                Focusable="False">
+                                                <Ellipse Width="{Binding VisualSize}" Height="{Binding VisualSize}"
+                                                         Fill="{Binding Fill}" Stroke="Black" StrokeThickness="1"/>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -89,17 +111,13 @@
             <Label Content="{Binding PingText}" FontSize="16" Margin="0,10,0,0"/>
         </StackPanel>
 
-        <!-- Steps + Move controls -->
+        <!-- Steps input -->
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Margin="100,2,0,0">
             <TextBlock Text="Steps:" Margin="0,6,6,0"/>
             <TextBox Width="60" Text="{Binding MoveSteps, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Move"
-                    Margin="8,0,0,0"
-                    Command="{Binding MoveSelectedPieceCommand}"/>
         </StackPanel>
-
     </Grid>
 </UserControl>

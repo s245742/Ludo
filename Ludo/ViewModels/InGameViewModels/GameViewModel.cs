@@ -1,8 +1,7 @@
 ﻿using Ludo;
-using Ludo.Models;
 using Ludo.ViewModels.InGameViewModels;
 using LudoClient.Commands;
-using LudoClient.Models;
+//using LudoClient.Models;
 using LudoClient.Services;
 using LudoClient.Stores;
 using LudoClient.ViewModels.Base;
@@ -17,6 +16,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
+using SharedModels.GameLogic;
 
 namespace LudoClient.ViewModels.InGameViewModels
 {
@@ -62,8 +62,10 @@ namespace LudoClient.ViewModels.InGameViewModels
             set { _moveSteps = value; OnPropertyChanged(nameof(MoveSteps)); }
         }
 
+
+
         public ICommand SelectPieceCommand { get; }
-        public ICommand MoveSelectedPieceCommand { get; }
+        //public ICommand MoveSelectedPieceCommand { get; }
 
 
 
@@ -74,19 +76,14 @@ namespace LudoClient.ViewModels.InGameViewModels
             gamePlayers = currPlayersStore.GamePlayers;
             PingCommand = new RelayCommand(SendPing);
 
-
             //tilføjet for at initialisere spillet med bræt og spillere
             _game = new Game(BoardFactory.CreateBoard(), currPlayersStore.GamePlayers);
 
             GenerateBoard();
             if (_game.Players != null && _game.Players.Any())
                 PlaceAllPieces();
-            //GeneratePieces();
-
 
             SelectPieceCommand = new RelayCommand<PieceViewModel>(SelectPiece);
-            MoveSelectedPieceCommand = new RelayCommand(MoveSelectedPiece);
-
             PlaceAllPieces();
 
 
@@ -104,51 +101,27 @@ namespace LudoClient.ViewModels.InGameViewModels
 
         private void ReselectByModelPiece(Piece modelPiece)
         {
+            // Ingen visuel selection længere:
             var found = BoardCells.SelectMany(c => c.Pieces)
                                   .FirstOrDefault(pv => ReferenceEquals(pv.ModelPiece, modelPiece));
-            foreach (var cell in BoardCells)
-                foreach (var pv in cell.Pieces)
-                    pv.IsSelected = false;
+            SelectedPieceVM = found; // (valgfrit: behold reference hvis du vil)
 
-            if (found != null)
-            {
-                found.IsSelected = true;
-                SelectedPieceVM = found;
-            }
-            else
-            {
-                SelectedPieceVM = null;
-            }
         }
 
 
-
-
-        private void MoveSelectedPiece()
-        {
-            if (SelectedPieceVM == null || MoveSteps == 0) return;
-
-            var modelPiece = SelectedPieceVM.ModelPiece;
-            _game.MovePiece(modelPiece, MoveSteps);
-
-            PlaceAllPieces();
-            ReselectByModelPiece(modelPiece);
-        }
-
-
-
-        // === NYT: vælg en brik ved klik ===
 
         private void SelectPiece(PieceViewModel? pvm)
         {
-            // Nulstil tidligere selection
-            foreach (var cell in BoardCells)
-                foreach (var pv in cell.Pieces)
-                    pv.IsSelected = false;
+            if (pvm == null) return;
 
-            SelectedPieceVM = pvm;
-            if (SelectedPieceVM != null)
-                SelectedPieceVM.IsSelected = true;
+            // Flyt direkte med MoveSteps
+            if (MoveSteps <= 0) return;
+            var modelPiece = pvm.ModelPiece;
+            _game.MovePiece(modelPiece, MoveSteps);
+            PlaceAllPieces();
+            ReselectByModelPiece(modelPiece);
+
+
         }
 
 
@@ -165,47 +138,94 @@ namespace LudoClient.ViewModels.InGameViewModels
             foreach (var cell in BoardCells)
                 cell.Pieces.Clear();
 
-            // 2) Tilføj brikker til korrekt celle
+            // 2) Byg map: gridIndex -> liste af Piece (model)
+            var cellBuckets = new Dictionary<int, List<Piece>>();
             foreach (var player in _game.Players)
             {
                 foreach (var piece in player.PlayerPieces)
                 {
                     int gridIndex = ToGridIndex(piece);
-                    var targetCell = BoardCells[gridIndex];
-                    targetCell.Pieces.Add(new PieceViewModel(piece));
+                    if (!cellBuckets.TryGetValue(gridIndex, out var list))
+                    {
+                        list = new List<Piece>();
+                        cellBuckets[gridIndex] = list;
+                    }
+                    list.Add(piece);
                 }
             }
 
-            // 3) (Valgfrit) Stacking: gør flere brikker af samme farve i samme celle mindre lag-på-lag
-            foreach (var cell in BoardCells)
+            // 3) Fyld celler med PieceViewModels m. stacking pr. farve (ingen forskydning)
+            foreach (var kvp in cellBuckets)
             {
-                if (cell.Pieces.Count <= 1) continue;
+                int gridIndex = kvp.Key;
+                var modelPiecesInCell = kvp.Value;
+                var targetCell = BoardCells[gridIndex];
 
-                var groups = cell.Pieces.GroupBy(p => p.ModelPiece.Color);
-                foreach (var g in groups)
+                // Gruppér KUN pr. farve
+                var colorGroups = modelPiecesInCell.GroupBy(mp => mp.Color);
+
+                foreach (var colorGroup in colorGroups)
                 {
-                    double[] sizes = new[] { 40.0, 30.0, 20.0, 10.0 };
-                    int i = 0;
-                    foreach (var pv in g)
+                    var models = colorGroup.ToList();
+
+                    // Størrelse pr. lag (justér efter smag)
+                    double[] sizes = { 25.0, 20.0, 15.0, 10.0 };
+
+                    // VIGTIGT: Tilføj i rækkefølge STØRST -> MINDEST
+                    // Så de små tilføjes sidst og ligger øverst i Z-orden.
+                    for (int i = 0; i < models.Count; i++)
                     {
-                        pv.VisualSize = sizes[Math.Min(i, sizes.Length - 1)];
-                        i++;
+                        var pv = new PieceViewModel(models[i])
+                        {
+                            VisualSize = sizes[Math.Min(i, sizes.Length - 1)]
+                        };
+
+                        targetCell.Pieces.Add(pv);
                     }
                 }
             }
         }
-
-
         private void GenerateBoard()
         {
             int totalCells = 225; // 15x15 grid
             for (int i = 0; i < totalCells; i++)
             {
                 Cell cell;
-
+                PieceColor ownedBy = PieceColor.None;
                 if (GameViewBoardDefinition.Path.Contains(i))
                 {
-                    cell = new PathCell(i, i, PathType.Normal);
+                    PathType type = PathType.Normal;
+                    
+                    if (GameBoardDefinitions.Stars.Contains(i))
+                    {
+                        type = PathType.Star;
+                    }
+                    if (GameViewBoardDefinition.Globes.Contains(i))
+                    {
+                        type = PathType.Globe;
+                        if (i == GameViewBoardDefinition.GreenHomeEntry)
+                        {
+                             ownedBy = PieceColor.Green;
+                        }
+                        else if (i == GameViewBoardDefinition.YellowHomeEntry)
+                        {
+                             ownedBy = PieceColor.Yellow;
+                        }
+                        else if (i == GameViewBoardDefinition.RedHomeEntry)
+                        {
+                             ownedBy = PieceColor.Red;
+                        }
+                        else if (i == GameViewBoardDefinition.BlueHomeEntry)
+                        {
+                             ownedBy = PieceColor.Blue;
+                        }
+                        else
+                        {
+                            ownedBy = PieceColor.None;
+                        }
+                    }
+                    cell = new PathCell(i, Array.IndexOf(GameViewBoardDefinition.Path, i), type);
+                    
                 }
                 else if (GameViewBoardDefinition.GreenStart.Contains(i))
                 {
@@ -260,19 +280,11 @@ namespace LudoClient.ViewModels.InGameViewModels
                     cell = new EmptyCell(i);
                 }
 
-                BoardCells.Add(new CellViewModel(cell));
+                BoardCells.Add(new CellViewModel(cell, ownedBy));
             }
         }
 
-        //private void GeneratePieces()
-        //{
-        //    foreach (var player in _game.Players)
-        //        foreach (var piece in player.PlayerPieces)
-        //            Pieces.Add(new PieceViewModel(piece));
-        //}
-
-
-
+        // Client-server
         private string _pingLabelText;
         public string PingLabelText
         {
@@ -315,25 +327,11 @@ namespace LudoClient.ViewModels.InGameViewModels
         }
 
 
-   
-
-
-        // test methods to move pieces around the board
-        private void MoveToPiece(PieceViewModel piece, int newSpaceIndex)
-        {
-            if (piece.SpaceIndex >= 0 && piece.SpaceIndex < BoardCells.Count)
-            {
-                BoardCells[piece.SpaceIndex].Pieces.Remove(piece);
-            }
-            piece.SpaceIndex = newSpaceIndex;
-            BoardCells[newSpaceIndex].Pieces.Add(piece);
-        }
-
-        // GameViewModel.cs
+        // Helpers to convert Piece.SpaceIndex to Grid Index
         private int ToGridIndex(Piece piece)
         {
             // Hjemme: SpaceIndex < 0 -> vis i farvens startfelt efter SlotIndex (0..3)
-            if (piece.SpaceIndex == 0)
+            if (piece.SpaceIndex == PiecePositionCodec.Home)
             {
                 return piece.Color switch
                 {
@@ -345,9 +343,10 @@ namespace LudoClient.ViewModels.InGameViewModels
                 };
             }
 
-            if (piece.SpaceIndex > GameViewBoardDefinition.Path.Length) // I mål: SpaceIndex > Path.Length -> vis i farvens målzone
+            // i målzone:  SpaceIndex = GoalBase + 1..GoalBase + 5 -> vis i farvens målzone
+            if (piece.SpaceIndex >= PiecePositionCodec.GoalPathStart && piece.SpaceIndex <= PiecePositionCodec.GoalPathStart +4) // I mål: SpaceIndex > Path.Length -> vis i farvens målzone
             {
-                int homeIndex = piece.SpaceIndex - GameViewBoardDefinition.Path.Length - 1; // 0..3
+                int homeIndex = piece.SpaceIndex - PiecePositionCodec.GoalPathStart; // 0..3
                 return piece.Color switch
                 {
                     PieceColor.Green => GameViewBoardDefinition.GreenHome[homeIndex],
@@ -358,9 +357,11 @@ namespace LudoClient.ViewModels.InGameViewModels
                 };
             }
 
-            if(piece.SpaceIndex < 1) // ugyldig SpaceIndex
+            if(piece.SpaceIndex < 0) // ugyldig SpaceIndex
                 return 0;
-            if (piece.SpaceIndex > GameViewBoardDefinition.Path.Length + GameViewBoardDefinition.GreenHome.Length)
+
+            // I mål: SpaceIndex == GoalValue -> vis i farvens mål
+            if (piece.SpaceIndex == PiecePositionCodec.GoalValue)
             {
                 return piece.Color switch
                 {
@@ -380,8 +381,16 @@ namespace LudoClient.ViewModels.InGameViewModels
             return GameViewBoardDefinition.Path[pathIndex];
         }
 
-
-
+        // test methods to move pieces around the board
+        private void Tester_MoveToPiece(PieceViewModel piece, int newSpaceIndex)
+        {
+            if (piece.SpaceIndex >= 0 && piece.SpaceIndex < BoardCells.Count)
+            {
+                BoardCells[piece.SpaceIndex].Pieces.Remove(piece);
+            }
+            piece.SpaceIndex = newSpaceIndex;
+            BoardCells[newSpaceIndex].Pieces.Add(piece);
+        }
 
     }
 }

@@ -10,7 +10,6 @@ namespace SharedModels.Models
     public class Piece
     {
         public int Player_ID { get; set; } //sent to db
-
         public int SpaceIndex { get; set; } //sent to db
         public PieceColor Color { get; init; } //can derive from player
         public int SlotIndex { get; init; } //sent to db
@@ -33,5 +32,21 @@ namespace SharedModels.Models
 
         public bool IsAtPosition(int index) => SpaceIndex == index;
 
+        public int GetCommonPathIndex()
+        {
+            return (SpaceIndex - GameBoardDefinitions.PathOffsets[Color]) % 52;
+        }
+
+        public bool isPieceSameIndex(Piece other)
+        {
+            return this.GetCommonPathIndex == other.GetCommonPathIndex;
+        }
+
+        public bool isPieceSameColor(Piece other)
+        {
+            return this.Color == other.Color;
+        }
+
+       
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LudoClient.Models
+namespace SharedModels.Models
 {
 
     // this class defines the game board layout and starting positions for a Ludo game in the uniform grid system
@@ -52,9 +52,12 @@ namespace LudoClient.Models
 
         // Home entry positions for each color on the main path
         public static int GreenHomeEntry = 23;
-        public static int YellowHomeEntry = 101;
+        public static int YellowHomeEntry = 201;
         public static int RedHomeEntry = 91;
-        public static int BlueHomeEntry = 148;
+        public static int BlueHomeEntry = 133;
+
+        // Globes positions on the main path
+        public static int[] Globes = { 23, 51, 91, 122, 133, 158, 201, 216 };
 
         //Offsets in the Path array for each color's start and home entry positions
         private static int BlueHomeEntryOffset = 18;
@@ -68,9 +71,9 @@ namespace LudoClient.Models
     {
 
         // Stars in the Path array
-        public static int[] Stars = { 5, 11, 18, 24, 31, 37, 44, 50 };
+        public static int[] Stars = { 1, 8, 14, 21, 27, 34, 40, 47 };
 
-        public static int[] Globes = { 0, 8, 13, 21, 26, 34, 39, 47 };
+        public static int[] Globes = { 3, 11, 16, 24, 29, 37, 42, 49 };
 
 
         // Offsets in the Path array for each color's start and home entry positions

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using LudoClient.Services;
-using LudoClient.Models;
+//using LudoClient.Models;
 using LudoClient.ViewModels.Base;
 using SharedModels.Models;
 

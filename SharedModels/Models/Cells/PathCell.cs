@@ -10,7 +10,7 @@ namespace SharedModels.Models.Cells
     {
         public int PathIndex { get; }
         public PathType Type { get; set; }
-        public PieceColor OwnedBy { get; set; }
+        public PieceColor OwnedBy { get; set; } = PieceColor.None;
         public PathCell(int cellIndex, int pathIndex, PathType type) 
             : base(cellIndex, CellType.Path)
         {
@@ -23,9 +23,14 @@ namespace SharedModels.Models.Cells
             return this.Pieces.Count > 0;
         }
 
+        public bool IsStacked()
+        {
+            return this.Pieces.Count > 1;
+        }
+
         public bool IsSafeZone()
         {
-            return this.Type == PathType.Star || this.Type == PathType.Globe;
+            return this.Type == PathType.Globe;
         }
 
         public PieceColor? GetOccupyingColor()

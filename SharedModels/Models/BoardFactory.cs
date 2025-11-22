@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LudoClient.Models;
+//using LudoClient.Models;
 using SharedModels.Models;
 using SharedModels.Models.Cells;
 
-namespace Ludo.Models
+namespace SharedModels.Models
 {
     public static class BoardFactory
     {
@@ -25,7 +25,7 @@ namespace Ludo.Models
             {
                 int cellIndex = GameViewBoardDefinition.Path[i];
                 PathType type;
-
+                var ownedBy = PieceColor.None;
 
                 if (GameBoardDefinitions.Stars.Contains(i))
                 {
@@ -34,6 +34,23 @@ namespace Ludo.Models
 
                 else if (GameBoardDefinitions.Globes.Contains(i))
                 {
+                    
+                    if (i == GameBoardDefinitions.GreenHomeEntry)
+                    {
+                        ownedBy = PieceColor.Green;
+                    }
+                    else if (i == GameBoardDefinitions.YellowHomeEntry)
+                    {
+                        ownedBy = PieceColor.Yellow;
+                    }
+                    else if (i == GameBoardDefinitions.RedHomeEntry)
+                    {
+                        ownedBy = PieceColor.Red;
+                    }
+                    else if (i == GameBoardDefinitions.BlueHomeEntry)
+                    {
+                        ownedBy = PieceColor.Blue;
+                    }
                     type = PathType.Globe;
                 }
                 else
@@ -42,11 +59,10 @@ namespace Ludo.Models
                 }
 
                 pathCells[i] = new PathCell(
-
                     cellIndex: cellIndex,
                     pathIndex: i,
-                    type: type
-                );
+                    type: type);
+                pathCells[i].OwnedBy = ownedBy;
                 Debug.WriteLine($"PathIndex: {i}, CellIndex: {cellIndex}, Type: {type}");
 
                 // set home entry cells

@@ -1,8 +1,8 @@
-﻿using LudoClient.Models;
+﻿//using LudoClient.Models;
 using SharedModels.Models;
 using System;
 using System.Collections.Generic;
-using Ludo.Models;
+
 using System.ComponentModel;
 using System.Windows.Media;
 
@@ -33,7 +33,7 @@ namespace LudoClient.ViewModels.InGameViewModels
             _ => Brushes.Gray
         };
 
-        private double _visualSize = 40.0;
+        private double _visualSize = 35.0;
         public double VisualSize
         {
             get => _visualSize;

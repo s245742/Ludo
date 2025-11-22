@@ -14,7 +14,7 @@ namespace SharedModels.Models
         Globe,
         GoalEntry
     }
-    public enum PieceColor : int { Red = 0, Green = 1, Blue = 2, Yellow = 3 }
+    public enum PieceColor : int { Red = 0, Green = 1, Blue = 2, Yellow = 3, None = -1 }
 
     public enum CellType
     {

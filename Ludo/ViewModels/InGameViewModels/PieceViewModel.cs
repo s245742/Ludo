@@ -1,4 +1,5 @@
 ﻿//using LudoClient.Models;
+using LudoClient.ViewModels.Base;
 using SharedModels.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Windows.Media;
 
 namespace LudoClient.ViewModels.InGameViewModels
 {
-    public class PieceViewModel : INotifyPropertyChanged
+    public class PieceViewModel : ViewModelBase
     {
         public Piece ModelPiece { get; }
         public int SpaceIndex
@@ -61,10 +62,6 @@ namespace LudoClient.ViewModels.InGameViewModels
             ModelPiece = piece;
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+      
     }
 }

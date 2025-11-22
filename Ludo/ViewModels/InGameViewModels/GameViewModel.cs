@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SharedModels.Models;
 using SharedModels.Models.Cells;
 using SharedModels.TransferMsg;
+using SharedModels.Models.DTO;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Text.Json;
@@ -35,16 +36,7 @@ namespace LudoClient.ViewModels.InGameViewModels
         private ObservableCollection<Player> gamePlayers;
 
         public ICommand NavigateStartScreenCommand { get; }
-        public RelayCommand SaveGameCommand { get; }
-
-        public ICommand PingCommand { get; }
-
-        private string _pingText;
-        public string PingText
-        {
-            get => _pingText;
-            set { _pingText = value; OnPropertyChanged(nameof(PingText)); }
-        }
+        public RelayCommand ExitGameCommand { get; }
 
 
         private PieceViewModel? _selectedPieceVM;
@@ -71,10 +63,10 @@ namespace LudoClient.ViewModels.InGameViewModels
 
         public GameViewModel(NavigationStore navigationStore, CurrPlayersStore currPlayersStore, NetworkService networkService)
         {
+            
             _networkService = networkService;
             NavigateStartScreenCommand = new NavigateCommand<StartScreenViewModel>(navigationStore, () => App.ServiceProvider.GetRequiredService<StartScreenViewModel>());
             gamePlayers = currPlayersStore.GamePlayers;
-            PingCommand = new RelayCommand(SendPing);
 
             //tilføjet for at initialisere spillet med bræt og spillere
             _game = new Game(BoardFactory.CreateBoard(), currPlayersStore.GamePlayers);
@@ -84,6 +76,8 @@ namespace LudoClient.ViewModels.InGameViewModels
                 PlaceAllPieces();
 
             SelectPieceCommand = new RelayCommand<PieceViewModel>(SelectPiece);
+            ExitGameCommand = new RelayCommand(ExitGame);
+
             PlaceAllPieces();
 
 
@@ -91,11 +85,26 @@ namespace LudoClient.ViewModels.InGameViewModels
         }
         public async Task InitializeAsync()
         {
-            if (!_networkService.IsConnected)
-                await _networkService.ConnectAsync("127.0.0.1", 5000);
+            //if (!_networkService.IsConnected)
+              //  await _networkService.ConnectAsync("127.0.0.1", 5000);
 
             // Start listening on a background thread
             _ = Task.Run(() => _networkService.StartListeningAsync(OnMessage));
+        }
+
+        private async void ExitGame()
+        {
+            try
+            {
+                if (_networkService.IsConnected)
+                    await _networkService.DisconnectAsync();
+
+                NavigateStartScreenCommand.Execute(null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ExitGame error: " + ex.Message);
+            }
         }
 
 
@@ -110,18 +119,48 @@ namespace LudoClient.ViewModels.InGameViewModels
 
 
 
-        private void SelectPiece(PieceViewModel? pvm)
+        private async void SelectPiece(PieceViewModel? pvm)
         {
             if (pvm == null) return;
 
             // Flyt direkte med MoveSteps
             if (MoveSteps <= 0) return;
             var modelPiece = pvm.ModelPiece;
-            _game.MovePiece(modelPiece, MoveSteps);
+            var result = _game.MovePiece(pvm.ModelPiece, MoveSteps);
             PlaceAllPieces();
             ReselectByModelPiece(modelPiece);
 
+            //send to ´server and broadcast to other clients
+            await BroadcastMoveAsync(result);
 
+        }
+
+        private async Task BroadcastMoveAsync(List<Piece> result)
+        {
+
+            //send all updated pieces to broadcast update
+            foreach (var piece in result)
+            {
+                if (!_networkService.IsConnected) return;
+
+                var moveDto = new MovePieceDto
+                {
+                    Player_ID = piece.Player_ID,
+                    Color = piece.Color,
+                    SlotIndex = piece.SlotIndex,
+                    SpaceIndex = piece.SpaceIndex
+                };
+
+                var envelope = new MessageEnvelope
+                {
+                    MessageType = "MovePiece",
+                    Payload = JsonSerializer.Serialize(moveDto)
+                };
+
+                string json = JsonSerializer.Serialize(envelope);
+                await _networkService.SendAsync(json);
+
+            }
         }
 
 
@@ -284,48 +323,51 @@ namespace LudoClient.ViewModels.InGameViewModels
             }
         }
 
-        // Client-server
-        private string _pingLabelText;
-        public string PingLabelText
-        {
-            get => _pingLabelText;
-            set
-            {
-                _pingLabelText = value;
-                OnPropertyChanged(nameof(PingLabelText));
-            }
-        }
+        // Når client modtager message fra server
         private void OnMessage(string msg)
         {
             try
             {
                 var envelope = JsonSerializer.Deserialize<MessageEnvelope>(msg);
-                if (envelope?.MessageType == "PingResponse")
+                if (envelope == null) return;
+
+                switch (envelope.MessageType)
                 {
-                    string text = JsonSerializer.Deserialize<string>(envelope.Payload);
-                    Application.Current.Dispatcher.Invoke(() => PingText = text);
+                    case "MovePiece": 
+                        try
+                        {
+                            var moveDto = JsonSerializer.Deserialize<MovePieceDto>(envelope.Payload);
+                            if (moveDto == null) return;
+
+                            var piece = _game.Players
+                                .SelectMany(p => p.PlayerPieces)
+                                .FirstOrDefault(p =>
+                                    p.Player_ID == moveDto.Player_ID &&
+                                    p.Color == moveDto.Color &&
+                                    p.SlotIndex == moveDto.SlotIndex
+                                );
+                            if (piece == null)
+                            {
+                                Console.WriteLine("MovePiece: piece not found for Player_ID=" + moveDto.Player_ID);
+                                return;
+                            }
+
+                            piece.SpaceIndex = moveDto.SpaceIndex;
+
+                            Application.Current.Dispatcher.Invoke(PlaceAllPieces);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Failed parsing MovePiece payload: " + ex.Message + " Raw payload: " + envelope.Payload);
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error parsing message: " + ex.Message);
+                Console.WriteLine("Error parsing message envelope: " + ex.Message + " Raw message: " + msg);
             }
         }
-
-        private async void SendPing()
-        {
-            if (!_networkService.IsConnected) return;
-
-            var envelope = new MessageEnvelope
-            {
-                MessageType = "Ping",
-                Payload = JsonSerializer.Serialize("Hello from client!")
-            };
-
-            string json = JsonSerializer.Serialize(envelope);
-            await _networkService.SendAsync(json);
-        }
-
 
         // Helpers to convert Piece.SpaceIndex to Grid Index
         private int ToGridIndex(Piece piece)

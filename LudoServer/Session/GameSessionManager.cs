@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace LudoServer.Session
 {
     using SharedModels.Models;
     using System.Collections.Concurrent;
+    using System.Net.Sockets;
 
     public class GameSessionManager
     {
@@ -45,6 +46,46 @@ namespace LudoServer.Session
                     var stream = conn.GetStream();
                     var bytes = Encoding.UTF8.GetBytes(message + "\n");
                     await stream.WriteAsync(bytes);
+                }
+            }
+        }
+
+        public GameSession? GetSessionByClient(TcpClient client)
+{
+    foreach (var session in _sessions.Values)
+    {
+        if (session.PlayerConnections.Values.Contains(client))
+            return session;
+    }
+    return null;
+}
+        public GameSession? GetSessionByPlayer(int playerId)
+        {
+            foreach (var session in _sessions.Values)
+            {
+                if (session.Players.Values.Any(p => p.Player_ID == playerId))
+                {
+                    return session;
+                }
+            }
+            return null;
+        }
+        public void RemoveByClient(TcpClient client)
+        {
+            foreach (var session in _sessions.Values)
+            {
+                foreach (var kvp in session.PlayerConnections.ToList())
+                {
+                    if (kvp.Value == client)
+                    {
+                        var color = kvp.Key;
+
+                        session.PlayerConnections.Remove(color);
+                        session.Players.Remove(color);
+
+                        Console.WriteLine($"Player {color} removed from session {session.Game.Game_Name}");
+                        return;
+                    }
                 }
             }
         }

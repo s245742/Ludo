@@ -49,6 +49,33 @@ namespace LudoClient.Services
             return Encoding.UTF8.GetString(responseBuffer);
         }
 
+        public async Task DisconnectAsync()
+        {
+            try
+            {
+                if (_stream != null)
+                {
+                    await _stream.FlushAsync();
+                    _stream.Close();
+                    _stream.Dispose();
+                    _stream = null;
+                }
+
+                if (_client != null)
+                {
+                    _client.Close();
+                    _client.Dispose();
+                    _client = null;
+                }
+
+                Console.WriteLine("Disconnected from server.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Disconnect error: " + ex.Message);
+            }
+        }
+
         // Continuous listening for messages from server
         public async Task StartListeningAsync(Action<string> onMessageReceived)
         {
@@ -85,10 +112,6 @@ namespace LudoClient.Services
             }
         }
 
-        private void OnMessageReceived(string msg)
-        {
-            Console.WriteLine("Received: " + msg);
-        }
         // Fire-and-forget send (no blocking read)
         public async Task SendAsync(string message)
         {

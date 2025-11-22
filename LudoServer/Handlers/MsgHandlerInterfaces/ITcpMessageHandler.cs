@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LudoServer.Handlers
+namespace LudoServer.Handlers.MsgHandlerInterfaces
 {
     public interface ITcpMessageHandler
     {

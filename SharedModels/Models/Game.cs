@@ -39,84 +39,95 @@ namespace SharedModels.Models
 
 
         // Flyttelogik
-        public Piece MovePiece(Piece piece, int steps)
+        public List<Piece> MovePiece(Piece piece, int steps)
         {
+            List<Piece> PiecesToMove = new List<Piece>();
+            PiecesToMove.Add(piece);
 
-            // TODO: muligvis ænding til LINQ:
-            // Find alle spillere der er samme sted og sæt i en liste--> tæl listen --> hvis flere send sig selv hjem ellers send listen(0) hjem
-            // flyt spiller hen på rigtige plads
-            if (Board == null || Players == null) return null;
+            if (Board == null || Players == null)
+                return PiecesToMove;
+
             rules.MovePieceSteps(piece, steps);
 
-            //var a = Board.Path[0].OwnedBy = PieceColor.None;
-
             int countPlayer = 0;
-            // Tæl hvor mange andre spillere der er
+
             foreach (var player in Players)
             {
                 foreach (var otherPiece in player.PlayerPieces)
                 {
-                    if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece && otherPiece.isAtPath())
+                    if (piece.isPieceSameIndex(otherPiece) &&
+                        !piece.isPieceSameColor(otherPiece) &&
+                        piece != otherPiece &&
+                        otherPiece.isAtPath())
                     {
-                            countPlayer++;                       
+                        countPlayer++;
                     }
                 }
             }
-            // hvis der er nogen der står på globus:
 
-            // send sig selv hjem hvis der er flere andre brikker på pladsen eller på globus
-            if ((countPlayer > 1 && countPlayer <5))
+            // CAPTURE LOGIC
+            if (countPlayer > 1)
             {
-                // hvis flere brikker er på en hjemmeglobus
                 if (Board.Path[piece.GetCommonPathIndex() - 1].OwnedBy == piece.Color)
                 {
                     foreach (var player in Players)
                     {
                         foreach (var otherPiece in player.PlayerPieces)
                         {
-                            if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece)
+                            if (piece.isPieceSameIndex(otherPiece) &&
+                                !piece.isPieceSameColor(otherPiece) &&
+                                otherPiece != piece)
                             {
-                                    rules.MovePieceBackToHome(otherPiece);
+                                rules.MovePieceBackToHome(otherPiece);
+                                PiecesToMove.Add(otherPiece);
                             }
                         }
                     }
-
                 }
                 else
                 {
                     rules.MovePieceBackToHome(piece);
+                    PiecesToMove.Add(piece);
                 }
             }
+
             if (countPlayer == 1)
             {
-                //find other piece med samme index og send hjem
                 foreach (var player in Players)
                 {
                     foreach (var otherPiece in player.PlayerPieces)
                     {
-                        if (piece.isPieceSameIndex(otherPiece) && !piece.isPieceSameColor(otherPiece) && piece != otherPiece)
+                        if (piece.isPieceSameIndex(otherPiece) &&
+                            !piece.isPieceSameColor(otherPiece) &&
+                            piece != otherPiece)
                         {
-                            if (otherPiece.isAtPath() && Board.Path[piece.GetCommonPathIndex() - 1].Type == PathType.Globe)
+                            if (otherPiece.isAtPath() &&
+                                Board.Path[piece.GetCommonPathIndex() - 1].Type == PathType.Globe)
                             {
-                                if (Board.Path[piece.GetCommonPathIndex()-1].OwnedBy == piece.Color)
-                                { 
-                                    rules.MovePieceBackToHome(otherPiece); 
+                                if (Board.Path[piece.GetCommonPathIndex() - 1].OwnedBy == piece.Color)
+                                {
+                                    rules.MovePieceBackToHome(otherPiece);
+                                    PiecesToMove.Add(otherPiece);
                                 }
                                 else
                                 {
                                     rules.MovePieceBackToHome(piece);
+                                    PiecesToMove.Add(piece);
                                 }
                             }
                             else
                             {
                                 rules.MovePieceBackToHome(otherPiece);
+                                PiecesToMove.Add(otherPiece);
                             }
                         }
                     }
                 }
             }
-            return piece;
+
+            return PiecesToMove;
         }
+
 
 
         public bool IsPositionOccupied(int index)

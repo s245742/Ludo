@@ -126,35 +126,41 @@ namespace LudoClient.ViewModels.InGameViewModels
             // Flyt direkte med MoveSteps
             if (MoveSteps <= 0) return;
             var modelPiece = pvm.ModelPiece;
-            Piece updatedPiece = _game.MovePiece(modelPiece, MoveSteps);
+            var result = _game.MovePiece(pvm.ModelPiece, MoveSteps);
             PlaceAllPieces();
             ReselectByModelPiece(modelPiece);
 
             //send to ´server and broadcast to other clients
-            await BroadcastMoveAsync(updatedPiece);
+            await BroadcastMoveAsync(result);
 
         }
 
-        private async Task BroadcastMoveAsync(Piece piece)
+        private async Task BroadcastMoveAsync(List<Piece> result)
         {
-            if (!_networkService.IsConnected) return;
 
-            var moveDto = new SharedModels.Models.DTO.MovePieceDto
+            //send all updated pieces to broadcast update
+            foreach (var piece in result)
             {
-                Player_ID = piece.Player_ID,
-                Color = piece.Color,
-                SlotIndex = piece.SlotIndex,
-                SpaceIndex = piece.SpaceIndex
-            };
+                if (!_networkService.IsConnected) return;
 
-            var envelope = new MessageEnvelope
-            {
-                MessageType = "MovePiece",
-                Payload = JsonSerializer.Serialize(moveDto)
-            };
+                var moveDto = new MovePieceDto
+                {
+                    Player_ID = piece.Player_ID,
+                    Color = piece.Color,
+                    SlotIndex = piece.SlotIndex,
+                    SpaceIndex = piece.SpaceIndex
+                };
 
-            string json = JsonSerializer.Serialize(envelope);
-            await _networkService.SendAsync(json);
+                var envelope = new MessageEnvelope
+                {
+                    MessageType = "MovePiece",
+                    Payload = JsonSerializer.Serialize(moveDto)
+                };
+
+                string json = JsonSerializer.Serialize(envelope);
+                await _networkService.SendAsync(json);
+
+            }
         }
 
 
@@ -335,8 +341,11 @@ namespace LudoClient.ViewModels.InGameViewModels
 
                             var piece = _game.Players
                                 .SelectMany(p => p.PlayerPieces)
-                                .FirstOrDefault(p => p.Player_ID == moveDto.Player_ID &&
-                                                     p.Color == moveDto.Color);
+                                .FirstOrDefault(p =>
+                                    p.Player_ID == moveDto.Player_ID &&
+                                    p.Color == moveDto.Color &&
+                                    p.SlotIndex == moveDto.SlotIndex
+                                );
                             if (piece == null)
                             {
                                 Console.WriteLine("MovePiece: piece not found for Player_ID=" + moveDto.Player_ID);

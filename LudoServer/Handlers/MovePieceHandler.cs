@@ -33,42 +33,46 @@ namespace LudoServer.Handlers
             var moveDto = JsonSerializer.Deserialize<MovePieceDto>(payload);
             if (moveDto == null) return "\"Invalid payload\"";
 
-            Piece piece = new Piece(moveDto.Color,moveDto.SlotIndex,moveDto.SpaceIndex)
+            // Update DB
+            Piece piece = new Piece(moveDto.Color, moveDto.SlotIndex, moveDto.SpaceIndex)
             {
-                Player_ID = moveDto.Player_ID,
+                Player_ID = moveDto.Player_ID
             };
 
-
-
-            //Update DB
-            int pieceid = _gamePieceService.GetPieceIDFromPiece(piece);
-            bool updated = _gamePieceService.UpdatePieceFromPieceID(piece, pieceid);
-
+            int pieceId = _gamePieceService.GetPieceIDFromPiece(piece);
+            bool updated = _gamePieceService.UpdatePieceFromPieceID(piece, pieceId);
             if (!updated) return "\"DB update failed\"";
 
-            //Broadcast to clients
-            foreach (var session in _sessionManager.GetAllSessions())
+            // 🔥 Get the session belonging to this player
+            var session = _sessionManager.GetSessionByClient(senderClient);
+            if (session == null)
             {
-                foreach (var kvp in session.PlayerConnections)
+                Console.WriteLine("MovePiece: No session found for client.");
+                return "\"No session found\"";
+            }
+
+            
+            // 🔥 Broadcast ONLY to this session
+            foreach (var kvp in session.PlayerConnections)
+            {
+                var client = kvp.Value;
+
+                if (client == senderClient)
+                    continue;
+
+                if (client.Connected)
                 {
-                    var client = kvp.Value;
-
-                    // skip sender
-                    if (client == senderClient)
-                        continue;
-
-                    if (client.Connected)
+                    await SendToClient(client, new MessageEnvelope
                     {
-                        await SendToClient(client, new MessageEnvelope
-                        {
-                            MessageType = "MovePiece",
-                            Payload = JsonSerializer.Serialize(moveDto)
-                        });
-                    }
+                        MessageType = "MovePiece",
+                        Payload = JsonSerializer.Serialize(moveDto)
+                    });
                 }
             }
+
             return "\"MovePiece delivered\"";
         }
+
 
         private async Task SendToClient(TcpClient client, MessageEnvelope envelope)
         {

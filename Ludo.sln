@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LudoServer", "LudoServer\Lu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedModels", "SharedModels\SharedModels.csproj", "{AAA1B661-C3F1-44D3-8631-775B5356CE22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Tests\UnitTests.csproj", "{F19E010E-5C58-4E6E-808E-1683A97DCC34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{F35A5B73-74A7-4E66-8C66-AFB7A92DC406}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,14 @@ Global
 		{AAA1B661-C3F1-44D3-8631-775B5356CE22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAA1B661-C3F1-44D3-8631-775B5356CE22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAA1B661-C3F1-44D3-8631-775B5356CE22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F19E010E-5C58-4E6E-808E-1683A97DCC34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F19E010E-5C58-4E6E-808E-1683A97DCC34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F19E010E-5C58-4E6E-808E-1683A97DCC34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F19E010E-5C58-4E6E-808E-1683A97DCC34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F35A5B73-74A7-4E66-8C66-AFB7A92DC406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F35A5B73-74A7-4E66-8C66-AFB7A92DC406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F35A5B73-74A7-4E66-8C66-AFB7A92DC406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F35A5B73-74A7-4E66-8C66-AFB7A92DC406}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

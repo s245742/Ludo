@@ -50,6 +50,26 @@ namespace LudoServer.Session
             }
         }
 
+        public GameSession? GetSessionByClient(TcpClient client)
+{
+    foreach (var session in _sessions.Values)
+    {
+        if (session.PlayerConnections.Values.Contains(client))
+            return session;
+    }
+    return null;
+}
+        public GameSession? GetSessionByPlayer(int playerId)
+        {
+            foreach (var session in _sessions.Values)
+            {
+                if (session.Players.Values.Any(p => p.Player_ID == playerId))
+                {
+                    return session;
+                }
+            }
+            return null;
+        }
         public void RemoveByClient(TcpClient client)
         {
             foreach (var session in _sessions.Values)

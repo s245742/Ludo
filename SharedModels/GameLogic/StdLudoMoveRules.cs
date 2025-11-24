@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -99,6 +100,7 @@ namespace SharedModels.GameLogic
         public bool MovePieceToGoal(Piece piece)
         {
             piece.SpaceIndex = PiecePositionCodec.GoalValue;
+            piece.IsFinished = true;
             return true;
             // Implementation of moving a piece to the goal
         }
@@ -122,6 +124,11 @@ namespace SharedModels.GameLogic
 
         public bool MovePieceToNextStar(Piece piece)
         {
+            if (!piece.isAtPath())
+            {
+                return false;
+            }
+            
             int piecePathIndex = piece.GetCommonPathIndex();
             if (GameBoardDefinitions.Stars.Contains(piecePathIndex-1))
             {
@@ -169,6 +176,7 @@ namespace SharedModels.GameLogic
         public bool MovePieceBackToGoalPath(Piece piece)
         {
             piece.SpaceIndex = PiecePositionCodec.GoalPathEnd;
+            piece.IsFinished = false;
             return true;
             // Implementation of moving a piece back to the goal path
         }

@@ -47,6 +47,12 @@ namespace SharedModels.Models
             if (Board == null || Players == null)
                 return PiecesToMove;
 
+            // kan ikke flytte en brik der er i mål
+            if (piece.IsFinished)
+            {
+                return PiecesToMove;
+            }
+
             rules.MovePieceSteps(piece, steps);
 
             // hvis landing på stjerne

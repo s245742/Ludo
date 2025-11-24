@@ -16,7 +16,7 @@ namespace SharedModels.Models
         public int SlotIndex { get; init; } //sent to db
 
         public bool IsAtStart { get; set; } = true; //can derive from boardpos
-        public bool IsFinished { get; set; } //can derive from boardpos
+        public bool IsFinished { get; set; } = false; //can derive from boardpos
 
         public bool isAtPath()
         {

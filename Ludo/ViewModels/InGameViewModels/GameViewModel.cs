@@ -18,6 +18,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using SharedModels.GameLogic;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace LudoClient.ViewModels.InGameViewModels
 {
@@ -54,6 +56,8 @@ namespace LudoClient.ViewModels.InGameViewModels
             set { _moveSteps = value; OnPropertyChanged(nameof(MoveSteps)); }
         }
 
+        public IReadOnlyList<int> PossipleSteps { get; } = new [] { 1, 2, 3, 4, 5, 6 };
+        public ICommand RollDiceCommand { get; }
 
 
         public ICommand SelectPieceCommand { get; }
@@ -77,6 +81,7 @@ namespace LudoClient.ViewModels.InGameViewModels
 
             SelectPieceCommand = new RelayCommand<PieceViewModel>(SelectPiece);
             ExitGameCommand = new RelayCommand(ExitGame);
+            RollDiceCommand = new RelayCommand(RollDice);
 
             PlaceAllPieces();
 
@@ -105,6 +110,11 @@ namespace LudoClient.ViewModels.InGameViewModels
             {
                 Console.WriteLine("ExitGame error: " + ex.Message);
             }
+        }
+
+        private void RollDice()
+        {
+            MoveSteps = Random.Shared.Next(1, 7);
         }
 
 

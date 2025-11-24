@@ -105,13 +105,22 @@
                 Width="80"
                 Command="{Binding ExitGameCommand}"/>
 
-        <!-- Steps input -->
+        <!-- Dice panel -->
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Margin="100,2,0,0">
-            <TextBlock Text="Steps:" Margin="0,6,6,0"/>
-            <TextBox Width="60" Text="{Binding MoveSteps, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- Dropdown med 1-6 -->
+            <ComboBox
+        Width="35"
+        ItemsSource="{Binding PossipleSteps}"
+        SelectedItem="{Binding MoveSteps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <!-- Roll Dice-knap -->
+            <Button
+        Content="Roll Dice"
+        Command="{Binding RollDiceCommand}" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -49,6 +49,10 @@ namespace SharedModels.Models
 
             rules.MovePieceSteps(piece, steps);
 
+            // hvis landing på stjerne
+            rules.MovePieceToNextStar(piece);
+
+
             int countPlayer = 0;
 
             foreach (var player in Players)

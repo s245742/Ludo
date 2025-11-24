@@ -120,6 +120,36 @@ namespace SharedModels.GameLogic
             return true;
         }
 
+        public bool MovePieceToNextStar(Piece piece)
+        {
+            int piecePathIndex = piece.GetCommonPathIndex();
+            if (GameBoardDefinitions.Stars.Contains(piecePathIndex-1))
+            {
+                // tjek om stjernen er sidste på spillerens path -
+                // hvis sidste flyv til mål ellers flyv til næste stjerne
+                if (piece.SpaceIndex == 51)
+                {
+                    MovePieceToGoal(piece);
+                }
+                else
+                {
+                    // find næste stjerne index og find ud af hvor mange steps piece skal bevæge sig
+                    int currentStarIndex = Array.IndexOf(GameBoardDefinitions.Stars, piecePathIndex-1);
+                    int nextStarIndex = ((currentStarIndex + 2) % GameBoardDefinitions.Stars.Length)-1;
+
+                    int stepsToNextStar = (GameBoardDefinitions.Stars[nextStarIndex] - GameBoardDefinitions.Stars[currentStarIndex]+52)%52;
+                    //ryk piece antal skridt
+                    for (int i = 0; i < stepsToNextStar; i++)
+                    {
+                        MovePieceOneStep(piece);
+                    }
+                    
+                }
+                return true;
+            }
+            return false;
+        }
+
         public bool MovePieceOneBackStep(Piece piece)
         {
             if (PiecePositionCodec.isStartGoalPath(piece.SpaceIndex))

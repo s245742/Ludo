@@ -13,11 +13,11 @@ namespace LudoServer.Handlers
 {
     public class GetAllGamesHandler : IMessageHandler
     {
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
+        private readonly IGameService _gameService;
+        private readonly IPlayerService _playerService;
         public string MessageType => "GetAllGamesAndPlayers";
 
-        public GetAllGamesHandler(GameService gameService, PlayerService playerService)
+        public GetAllGamesHandler(IGameService gameService, IPlayerService playerService)
         {
             _gameService = gameService;
             _playerService = playerService;

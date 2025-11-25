@@ -16,13 +16,13 @@ namespace LudoServer.Handlers
 {
     public class JoinGameHandler : ITcpMessageHandler
     {
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
-        private readonly GamePieceService _gamePieceService;
+        private readonly IGameService _gameService;
+        private readonly IPlayerService _playerService;
+        private readonly IGamePieceService _gamePieceService;
         private readonly GameSessionManager _gameSessionManager;
         public string MessageType => "JoinGame";
 
-        public JoinGameHandler(GameService gameService, PlayerService playerService, GamePieceService gamePieceService, GameSessionManager gameSessionManager)
+        public JoinGameHandler(IGameService gameService, IPlayerService playerService, IGamePieceService gamePieceService, GameSessionManager gameSessionManager)
         {
             _gameService = gameService;
             _playerService = playerService;

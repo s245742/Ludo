@@ -11,11 +11,9 @@ class Program
     static async Task Main()
     {
         var services = new ServiceCollection();
-        services.AddSingleton<GameService>();
-        services.AddSingleton<PlayerService>();
-        services.AddSingleton<GamePieceService>();
-
-
+        services.AddSingleton<IGameService, GameService>();
+        services.AddSingleton<IPlayerService, PlayerService>();
+        services.AddSingleton<IGamePieceService, GamePieceService>();
 
         //Handler as singleton
         services.AddSingleton<IMessageHandler, CreateGameHandler>();

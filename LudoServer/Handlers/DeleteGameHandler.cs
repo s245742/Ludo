@@ -15,13 +15,13 @@ namespace LudoServer.Handlers
 {
     public class DeleteGameHandler : IMessageHandler
     {
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
-        private readonly GamePieceService _gamePieceService;
+        private readonly IGameService _gameService;
+        private readonly IPlayerService _playerService;
+        private readonly IGamePieceService _gamePieceService;
         private readonly GameSessionManager _gameSessionManager;
         public string MessageType => "DeleteGame";
 
-        public DeleteGameHandler(GameService gameService, PlayerService playerService, GamePieceService gamePieceService, GameSessionManager gameSessionManager)
+        public DeleteGameHandler(IGameService gameService, IPlayerService playerService, IGamePieceService gamePieceService, GameSessionManager gameSessionManager)
         {
             _gameService = gameService;
             _playerService = playerService;

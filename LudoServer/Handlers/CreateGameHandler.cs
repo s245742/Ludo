@@ -13,12 +13,12 @@ namespace LudoServer.Handlers
 {
     public class CreateGameHandler : IMessageHandler
     {
-        private readonly GameService _gameService;
-        private readonly PlayerService _playerService;
-        private readonly GamePieceService _gamePieceService;
+        private readonly IGameService _gameService;
+        private readonly IPlayerService _playerService;
+        private readonly IGamePieceService _gamePieceService;
         public string MessageType => "CreateNewGame";
 
-        public CreateGameHandler(GameService gameService, PlayerService playerService, GamePieceService gamePieceService)
+        public CreateGameHandler(IGameService gameService, IPlayerService playerService, IGamePieceService gamePieceService)
         {
             _gameService = gameService;
             _playerService = playerService;

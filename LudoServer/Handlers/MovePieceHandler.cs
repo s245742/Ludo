@@ -17,11 +17,11 @@ namespace LudoServer.Handlers
 {
     public class MovePieceHandler : ITcpMessageHandler
     {
-        private readonly GamePieceService _gamePieceService;
+        private readonly IGamePieceService _gamePieceService;
         private readonly GameSessionManager _sessionManager;
         public string MessageType => "MovePiece";
 
-        public MovePieceHandler(GamePieceService gamePieceService, GameSessionManager sessionManager)
+        public MovePieceHandler(IGamePieceService gamePieceService, GameSessionManager sessionManager)
         {
             _gamePieceService = gamePieceService;
             _sessionManager = sessionManager;

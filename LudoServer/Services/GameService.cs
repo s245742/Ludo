@@ -6,7 +6,7 @@ using Microsoft.Data.SqlClient;
 namespace LudoServer.Services
 {
     
-    public class GameService : ServiceBase
+    public class GameService : ServiceBase, IGameService
     {
 
         #region createGame

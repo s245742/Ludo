@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LudoServer.Services
 {
-    public class GamePieceService : ServiceBase
+    public class GamePieceService : ServiceBase, IGamePieceService
     {
         
         #region CreateGamePiece

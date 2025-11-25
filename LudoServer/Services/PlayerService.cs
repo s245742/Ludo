@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace LudoServer.Services
 {
-    public class PlayerService : ServiceBase
+    public class PlayerService : ServiceBase, IPlayerService
     {
         
         public bool CreatePlayer(Player player)

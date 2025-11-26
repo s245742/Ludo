@@ -18,6 +18,7 @@ namespace SharedModels.Models
         public bool IsAtStart { get; set; } = true; //can derive from boardpos
         public bool IsFinished { get; set; } = false; //can derive from boardpos
 
+
         public bool isAtPath()
         {
             return (SpaceIndex > 0 && SpaceIndex <= PiecePositionCodec.PathEnd+1);

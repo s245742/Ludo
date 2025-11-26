@@ -21,6 +21,7 @@ namespace SharedModels.Models
             get { return game_name; }
             set { game_name = value;}
         }
+        public PieceColor PlayerWon { get; set; } = PieceColor.None;
 
         // Ny tilføjelse: Spiltilstand
         public Board? Board { get; private set; }
@@ -48,7 +49,7 @@ namespace SharedModels.Models
                 return PiecesToMove;
 
             // kan ikke flytte en brik der er i mål
-            if (piece.IsFinished)
+            if (PiecePositionCodec.IsGoal(piece.SpaceIndex))
             {
                 return PiecesToMove;
             }
@@ -57,6 +58,9 @@ namespace SharedModels.Models
 
             // hvis landing på stjerne
             rules.MovePieceToNextStar(piece);
+
+            
+            
 
 
             int countPlayer = 0;

@@ -43,7 +43,7 @@ namespace LudoServer.Handlers
             bool updated = _gamePieceService.UpdatePieceFromPieceID(piece, pieceId);
             if (!updated) return "\"DB update failed\"";
 
-            // 🔥 Get the session belonging to this player
+            //Get the session belonging to this player
             var session = _sessionManager.GetSessionByClient(senderClient);
             if (session == null)
             {
@@ -52,7 +52,7 @@ namespace LudoServer.Handlers
             }
 
             
-            // 🔥 Broadcast ONLY to this session
+            //Broadcast ONLY to this session
             foreach (var kvp in session.PlayerConnections)
             {
                 var client = kvp.Value;

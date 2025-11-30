@@ -13,11 +13,12 @@ namespace LudoClient.ViewModels.PreGameViewModels
         public MainViewModel(NavigationStore navigationStore)  
         {
             _navigationStore = navigationStore;
-            _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
+            //MainViewModel subscribed to the navStor event: “When NavigationStore fires its event, call MY method.”
+            _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged; 
         }
-
         private void OnCurrentViewModelChanged()
         {
+            //OnPropertyChanged tells WPF:“The CurrentViewModel property changed — redraw the screen.”
             OnPropertyChanged(nameof(CurrentViewModel)); //implemented on the viewModelBase which will invoke property changed
         }
 

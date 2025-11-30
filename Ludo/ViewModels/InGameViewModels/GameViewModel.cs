@@ -34,11 +34,21 @@ namespace LudoClient.ViewModels.InGameViewModels
 
         public int[] Path => GameViewBoardDefinition.Path;
 
-
         private ObservableCollection<Player> gamePlayers;
 
         public ICommand NavigateStartScreenCommand { get; }
         public RelayCommand ExitGameCommand { get; }
+
+        private String _message;
+        public String Message
+        {
+            get => _message;
+            set
+            {
+                _message = value;
+                OnPropertyChanged(nameof(Message));
+            }
+        }
 
 
         private PieceViewModel? _selectedPieceVM;
@@ -61,6 +71,17 @@ namespace LudoClient.ViewModels.InGameViewModels
 
 
         public ICommand SelectPieceCommand { get; }
+
+        //public void SetPlayerWon()
+        //{
+        //    if (_game.PlayerWon != PieceColor.None)
+        //    {
+        //        var playerInt = (int)_game.PlayerWon;
+        //        if (_game.Players == null) { return; }
+        //        Message = "Player " + _game.Players[playerInt].Player_Name + " has won!!" ;
+        //    }
+
+        //}
         //public ICommand MoveSelectedPieceCommand { get; }
 
 
@@ -139,6 +160,7 @@ namespace LudoClient.ViewModels.InGameViewModels
             var result = _game.MovePiece(pvm.ModelPiece, MoveSteps);
             PlaceAllPieces();
             ReselectByModelPiece(modelPiece);
+            
 
             //send to ´server and broadcast to other clients
             await BroadcastMoveAsync(result);
@@ -179,6 +201,8 @@ namespace LudoClient.ViewModels.InGameViewModels
         {
             _game.MovePiece(pieceVM.ModelPiece, steps);
             PlaceAllPieces();
+            HasPlayerWon();
+            
         }
 
         private void PlaceAllPieces()
@@ -233,6 +257,7 @@ namespace LudoClient.ViewModels.InGameViewModels
                     }
                 }
             }
+            HasPlayerWon();
         }
         private void GenerateBoard()
         {
@@ -377,6 +402,28 @@ namespace LudoClient.ViewModels.InGameViewModels
             {
                 Console.WriteLine("Error parsing message envelope: " + ex.Message + " Raw message: " + msg);
             }
+        }
+
+        private bool HasPlayerWon()
+        {
+            foreach (var player in _game.Players)
+            {
+                int count = 0;
+                foreach(var piece in player.PlayerPieces)
+                {
+                    if (PiecePositionCodec.IsGoal(piece.SpaceIndex)){ count++; }
+                    if (count == 4)
+                    {
+                        var color = piece.Color;
+                        var playerName = _game.Players[(int)piece.Color].Player_Name;
+                        Message = "Player " + color + " Won";
+                        System.Windows.MessageBox.Show(playerName + " [" + color + "] has won the game!");
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         // Helpers to convert Piece.SpaceIndex to Grid Index

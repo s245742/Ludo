@@ -98,29 +98,49 @@
         <!-- Exit game button -->
         <Button x:Name="ExitBtn"
                 Content="Exit Game"
+                FontSize="20"
                 HorizontalAlignment="Left"
                 Height="48"
                 Margin="2,2,0,0"
                 VerticalAlignment="Top"
-                Width="80"
+                Width="95"
                 Command="{Binding ExitGameCommand}"/>
 
         <!-- Dice panel -->
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Margin="100,2,0,0">
+                    Margin="100,2,0,0" Height="48" Width="400"
+                    >
 
             <!-- Dropdown med 1-6 -->
             <ComboBox
-        Width="35"
-        ItemsSource="{Binding PossipleSteps}"
-        SelectedItem="{Binding MoveSteps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Width="40"
+                HorizontalAlignment="Center"
+                VerticalContentAlignment="Center"
+                ItemsSource="{Binding PossipleSteps}"
+                FontSize="20"
+                SelectedItem="{Binding MoveSteps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <!-- Roll Dice-knap -->
             <Button
-        Content="Roll Dice"
-        Command="{Binding RollDiceCommand}" />
+                HorizontalAlignment="Center"
+                FontSize="20"
+                Content="Roll Dice"
+                Command="{Binding RollDiceCommand}" />
+
+            <!-- messages -->
+            <!-- 
+            <TextBlock
+                Margin="20,3,0,0"
+                FontSize="20"
+                Text="Message: " Width="263">
+            </TextBlock>
+            <TextBlock
+                Margin="0,3,0,0"
+                Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}">
+            </TextBlock>
+            -->
         </StackPanel>
     </Grid>
 </UserControl>

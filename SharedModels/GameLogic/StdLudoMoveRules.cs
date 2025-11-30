@@ -2,6 +2,7 @@
 using SharedModels.Models.Cells;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -14,6 +15,7 @@ namespace SharedModels.GameLogic
     public class StdLudoMoveRules
     {
         public bool FwdDirection { get; set; } = true;
+        public PieceColor PlayerWon { get; set; } = PieceColor.None;
 
         public StdLudoMoveRules()
         {
@@ -186,6 +188,46 @@ namespace SharedModels.GameLogic
             piece.SpaceIndex = PiecePositionCodec.PathEnd;
             return true;
             // Implementation of moving a piece back to the track
+        }
+
+        public bool HasAnyWon(Board board, ObservableCollection<Player> players)
+        {
+            if (board == null || players == null)
+            return false;
+
+            foreach (var player in players)
+            {
+                int count = 0;
+                foreach (var piece in player.PlayerPieces)
+                {
+                    if (piece.IsFinished)
+                    {
+                        count++;
+                    }
+                    if (count == 4)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+        }
+
+        public PieceColor HasPlayerWon(Board board)
+        {
+            foreach (var player in board.Player)
+            {
+                int count = 0;
+                foreach (var piece in player.PlayerPieces)
+                {
+                    if (PiecePositionCodec.IsGoal(piece.SpaceIndex))
+                    { count++; }
+                    if (count == 4)
+                    { return piece.Color; }
+                }
+            }
+            return PieceColor.None;
         }
 
         

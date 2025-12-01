@@ -15,6 +15,7 @@ public class JoinGameHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldJoinGame_WhenValid()
     {
+        //Arrange
         var gameService = new Mock<IGameService>();
         var playerService = new Mock<IPlayerService>();
         var pieceService = new Mock<IGamePieceService>();
@@ -51,9 +52,9 @@ public class JoinGameHandlerTests
         };
 
         var json = JsonSerializer.Serialize(dto);
-
+        //act
         var result = await handler.HandleAsync(json, new TcpClient());
-
+        //assert
         Assert.Contains("Success", result);
     }
 

@@ -14,19 +14,18 @@ public class MovePieceHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldMovePiece_WhenValid()
     {
+        //arrange
         var pieceService = new Mock<IGamePieceService>();
         var manager = new GameSessionManager();
 
         var client = new TcpClient();
         var game = new Game { Game_Name = "MoveTest" };
 
-        // Create real session
+        //Create session and put client in
         var session = manager.GetOrCreateSession(game);
-
-        // Put client in session
         session.PlayerConnections[PieceColor.Red] = client;
 
-        // Mock DB actions
+        //Mock DB
         pieceService.Setup(s => s.GetPieceIDFromPiece(It.IsAny<Piece>()))
                     .Returns(1);
 
@@ -45,8 +44,9 @@ public class MovePieceHandlerTests
 
         string json = JsonSerializer.Serialize(dto);
 
+        //act
         var result = await handler.HandleAsync(json, client);
-
+        //assert
         Assert.Contains("MovePiece delivered", result);
     }
 }

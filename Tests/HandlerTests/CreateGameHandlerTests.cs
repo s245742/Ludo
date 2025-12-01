@@ -32,6 +32,7 @@ public class CreateGameHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldCreateGame_WhenNameIsUnique()
     {
+        //Arrange
         var handler = CreateHandler();
 
         _gameService.Setup(s => s.getAll())
@@ -54,9 +55,9 @@ public class CreateGameHandlerTests
         };
 
         string json = JsonSerializer.Serialize(dto);
-
+        //Act
         var result = await handler.HandleAsync(json);
-
+        //Assert
         Assert.Equal("GameCreated", result);
     }
 

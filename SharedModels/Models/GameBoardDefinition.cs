@@ -69,7 +69,7 @@ namespace SharedModels.Models
 
     public static class GameBoardDefinitions
     {
-
+        
         // Stars in the Path array
         public static int[] Stars = { 1, 8, 14, 21, 27, 34, 40, 47 };
 
@@ -90,12 +90,12 @@ namespace SharedModels.Models
 
 
         public static readonly Dictionary<PieceColor, int> PathOffsets = new()
-    {
-        { PieceColor.Green, 3 },
-        { PieceColor.Blue, 16 },
-        { PieceColor.Yellow, 29 },
-        { PieceColor.Red, 42 }
-    };
+        {
+            { PieceColor.Green, 3 },
+            { PieceColor.Blue, 16 },
+            { PieceColor.Yellow, 29 },
+            { PieceColor.Red, 42 }
+        };
 
 
     }

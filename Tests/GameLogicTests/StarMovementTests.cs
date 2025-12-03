@@ -65,5 +65,35 @@ namespace UnitTests.GameLogicTests
             Assert.Equal(PiecePositionCodec.GoalPathStart, piece.SpaceIndex); // normally 100
         }
 
+        [Fact]
+        public void MovePiece_LandOnNextStar()
+        {
+            //arrange
+            var (game, player) = TestUtils.CreateSinglePlayerTest(PieceColor.Red);
+            var piece = player.PlayerPieces[0];
+
+            piece.SpaceIndex = 1; // 104
+                                    //act
+            game.MovePiece(piece, 5);
+            //assert
+            Assert.Equal(12, piece.SpaceIndex); // 200
+
+        }
+
+        [Fact]
+        public void MovePiece_LandOnLastStarHopToGoal()
+        {
+            //arrange
+            var (game, player) = TestUtils.CreateSinglePlayerTest(PieceColor.Red);
+            var piece = player.PlayerPieces[0];
+
+            piece.SpaceIndex = 48; // 104
+                                  //act
+            game.MovePiece(piece, 3);
+            //assert
+            Assert.Equal(PiecePositionCodec.GoalValue, piece.SpaceIndex); // 200
+
+        }
+
     }
 }
